@@ -16,14 +16,15 @@ def Home(request):
 
 def generate_feedback(request):
     if request.method == 'POST':
-        # If the request method is POST, it means the form has been submitted
-        input_text = request.POST.get('input_text', '')
+        user_input = request.POST.get('user_input', '')
+        feature_1 = request.POST.get('feature_1', '')
+        feature_2 = request.POST.get('feature_2', '')
 
         # Call the service function to process the input and generate feedback
-        response = run_queries_and_store_results(5, input_text)
+        response = run_queries_and_store_results(2, user_input, feature_1, feature_2)
 
         # Render an HTML template with the feedback included
-        return render(request, 'books/feedback.html', {'input_text': input_text, 'feedback': response})
+        return render(request, 'books/feedback.html', {'input_text': user_input, 'feedback': response})
     else:
         # If the request method is not POST, render the form template
         return render(request, 'books/feedback.html')

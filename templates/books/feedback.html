@@ -7,10 +7,14 @@
 </head>
 <body>
     <h1>Feedback Form</h1>
-    <form action="/api/feedback/" method="post" enctype=>
+    <form action="/api/feedback/" method="post">
         {% csrf_token %}
-        <label for="input_text">Enter your text:</label><br>
-        <textarea id="input_text" name="input_text" rows="4" cols="50"></textarea><br>
+        <label for="user_input">Enter user input:</label><br>
+        <textarea id="user_input" name="user_input" rows="4" cols="50"></textarea><br>
+        <label for="feature_1">Enter feature 1:</label><br>
+        <input type="text" id="feature_1" name="feature_1"><br>
+        <label for="feature_2">Enter feature 2:</label><br>
+        <input type="text" id="feature_2" name="feature_2"><br>
         <input type="submit" value="Submit">
     </form>
 

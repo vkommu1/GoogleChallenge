@@ -1,25 +1,19 @@
 import os
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.conf import settings  # Import Django settings module
 import google.generativeai as genai
 from google.generativeai import GenerativeModel, configure
-import requests
 import re
-
 
 def store_text(text, file_dir='media/text'):
     # Create a temporary file
     os.makedirs(file_dir, exist_ok=True)
-
-    # Define the file path
-    file_path=os.path.join(file_dir, 'input_text.txt')
+    file_path = os.path.join(file_dir, 'input_text.txt')
 
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(text)
 
     with open(file_path, 'r', encoding='utf-8') as file:
-        file_contents=file.read()
+        file_contents = file.read()
+    
     return file_contents
 
 def initialize_api():
@@ -29,43 +23,33 @@ def initialize_api():
     
     configure(api_key=GOOGLE_API_KEY)
 
-
-def process_input_and_generate_feedback(input_file):
-    """ Processes the audio file and returns generated feedback """
-    file_contents = store_text(input_file)
-
+def process_input_and_generate_feedback(user_input, feature_1, feature_2):
+    """Processes the input and generates feedback."""
     initialize_api()
 
-    prompt = "generate text description of a fake human person IMPORTANT:strictly in the format [race, gender], all lowercase"
-    model = GenerativeModel(model_name="models/gemini-1.5-pro-latest")
+    # Construct the prompt with user input and features
+    prompt = f"generate text description of a fake {user_input} IMPORTANT:strictly in the format [{feature_1}, {feature_2}], all lowercase"
 
-    
-    generated_feedback = model.generate_content([prompt, file_contents])
+    model = GenerativeModel(model_name="models/gemini-1.5-pro-latest")
+    generated_feedback = model.generate_content(prompt)
 
     response = generated_feedback.text
-
     return response
 
-def run_queries_and_store_results(num_queries, input_file):
-
+def run_queries_and_store_results(num_queries, user_input, feature_1, feature_2):
     results = {
-        'race': {},
-        'gender': {}
+        feature_1: {},
+        feature_2: {}
     }
 
-    # Run the process_input_and_generate_feedback function
     for _ in range(num_queries):
-        result = process_input_and_generate_feedback(input_file)
+        result = process_input_and_generate_feedback(user_input, feature_1, feature_2)
         print(result)
-        # Extract race and gender from the result
-        race_gender_str = result.strip().strip('][').split(') ')[-1]
-        race, gender = re.split(', | ', race_gender_str)
         
-        # Update the count for race and gender
-        results['race'][race] = results['race'].get(race, 0) + 1
-        results['gender'][gender] = results['gender'].get(gender, 0) + 1
+        feature_str = result.strip().strip('][').split(') ')[-1]
+        feature_1_value, feature_2_value = re.split(', | ', feature_str)
 
-    return results 
+        results[feature_1][feature_1_value] = results[feature_1].get(feature_1_value, 0) + 1
+        results[feature_2][feature_2_value] = results[feature_2].get(feature_2_value, 0) + 1
 
-
-
+    return results
