@@ -102,4 +102,4 @@ def delete_feedback(request, unique_id):
         profile.feedback_results = [feedback for feedback in profile.feedback_results if feedback.get('unique_id') != unique_id]
         profile.save()
         return redirect(reverse('profiles:user-profile', args=[request.user.id]))  # Redirect to the user profile page
-    return redirect('home')  # Redirect somewhere else if not POST
+    return redirect(reverse('profiles:user-profile', args=[request.user.id]))  
