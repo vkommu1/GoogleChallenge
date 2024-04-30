@@ -23,10 +23,23 @@
     <h2 class="header-1">Feedback Results</h2>
     {% if feedback_results %}
     <div>
-        {% for feedback in feedback_results %}
-            <p>Uniform: {{ feedback.uniform }}</p>
+      {%for feedback in feedback_results %}
+      <div>
+            <p>Input Text: {{feedback.input_text }}</p>
+            <p>Feature 1: {{ feedback.feature_1 }}</p>
+            <p>Feature 2: {{ feedback.feature_2 }}</p>
+            <p>Feedback: {{ feedback.feedback }}</p>
+            <p>Uniform Distribution: {{ feedback.uniform }}</p>
             <p>Real World Proportions: {{ feedback.real_world_proportions }}</p>
-        {% endfor %}
+            {% if feedback.unique_id %}
+            <form action="{% url 'api_interaction:delete_feedback' feedback.unique_id %}" method="post">
+              {% csrf_token %}
+              <button type="submit"> Delete </button>
+            {% else %}
+              <p> Warning: no unique identifier found </p>
+            {% endif %}
+        </div>
+      {%endfor%}
     </div>  
   {% else %}
     <p>No feedback results available.</p>

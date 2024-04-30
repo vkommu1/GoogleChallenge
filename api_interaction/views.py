@@ -14,6 +14,8 @@ import json
 from datetime import datetime
 import re
 from olclient.openlibrary import OpenLibrary
+from django.shortcuts import redirect
+import uuid
 
 
 def Home(request):
@@ -43,6 +45,8 @@ def generate_feedback(request):
         return render(request, 'books/feedback.html', {
             'input_text': user_input,
             'feedback': response,
+            'feature_1': feature_1,
+            'feature_2': feature_2,
             'real_world_proportions': real_world_proportions,
             'uniform': uniform_prop,
             'results_json': results_json,
@@ -54,20 +58,30 @@ def generate_feedback(request):
     
 @login_required
 def save_feedback(request):
+    print(request.POST)
     user_id = request.user.id
     profile_user = User.objects.get(pk=user_id)
 
     profile, created = UserProfile.objects.get_or_create(user=profile_user)
 
     # Ensuring the feedback_results is a list before appending
-    current_feedback = profile.feedback_results if isinstance(profile.feedback_results, list) else []
+    current_feedback = profile.feedback_results if isinstance(profile.feedback_results, list) else []  
 
+    new_input_text = request.POST.get('input_text', '')
+    new_feature_1 = request.POST.get('feature_1', '')
+    new_feature_2 = request.POST.get('feature_2', '')
+    new_feedback = request.POST.get('feedback', '')
     new_uniform = request.POST.get('uniform')
     new_real_world_proportions = request.POST.get('real_world_proportions')
 
     new_feedback = {
+        'input_text': new_input_text,
+        'feature_1': new_feature_1,
+        'feature_2': new_feature_2,
+        'feedback': new_feedback,
         'uniform': new_uniform,
-        'real_world_proportions': new_real_world_proportions
+        'real_world_proportions': new_real_world_proportions,
+        'unique_id': str(uuid.uuid4())
     }
 
     current_feedback.append(new_feedback)
@@ -76,7 +90,15 @@ def save_feedback(request):
     profile.save()
 
     return render(request, 'books/feedback.html', {
-        'input_text': request.POST.get('user_input', ''),
         'feedback': profile.feedback_results,  # Display the latest state of feedback results
         'save_success': True  # Trigger confirmation messages on the template
     })
+
+@login_required
+def delete_feedback(request, unique_id):
+    if request.method == 'POST':
+        profile = UserProfile.objects.get(user=request.user)
+        profile.feedback_results = [feedback for feedback in profile.feedback_results if feedback.get('unique_id') != unique_id]
+        profile.save()
+        return redirect('home')  # Redirect to the profile page or wherever appropriate
+    return redirect('home')  # Redirect somewhere else if not POST

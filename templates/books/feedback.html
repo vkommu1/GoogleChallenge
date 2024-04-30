@@ -40,6 +40,10 @@
 
     <form method="post" action="{% url 'api_interaction:save_feedback' %}">
     {% csrf_token %}
+    <input type="hidden" name="input_text" value="{{ input_text|safe }}">
+    <input type="hidden" name="feature_1" value="{{ feature_1|safe }}">
+    <input type="hidden" name="feature_2" value="{{ feature_2|safe }}">
+    <input type="hidden" name="feedback" value="{{ feedback|safe }}">
     <input type="hidden" name="uniform" value="{{ uniform|safe }}">
     <input type="hidden" name="real_world_proportions" value="{{ real_world_proportions|safe }}">
     <button type="submit">Save Results</button>
