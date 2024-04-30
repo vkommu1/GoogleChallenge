@@ -8,17 +8,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0002_book_isbn'),
+        #('books', '0002_book_isbn'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('profiles', '0001_initial'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='userprofile',
-            name='favorite_books',
-            field=models.ManyToManyField(blank=True, to='books.book'),
-        ),
+        #migrations.AddField(
+        #    model_name='userprofile',
+        #    name='favorite_books',
+        #    field=models.ManyToManyField(blank=True, to='books.book'),
+        #),
         migrations.AddField(
             model_name='userprofile',
             name='user',

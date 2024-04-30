@@ -20,7 +20,7 @@ from django.urls import reverse
 
 
 def Home(request):
-    return render(request, 'books/home.html')
+    return render(request, 'pages/home.html')
 
 def generate_feedback(request):
     if request.method == 'POST':
@@ -43,7 +43,7 @@ def generate_feedback(request):
         
         results_json = json.dumps(results)
 
-        return render(request, 'books/feedback.html', {
+        return render(request, 'pages/feedback.html', {
             'input_text': user_input,
             'feedback': response,
             'feature_1': feature_1,
@@ -55,7 +55,7 @@ def generate_feedback(request):
         })
     else:
         # If the request method is not POST, render the form template
-        return render(request, 'books/feedback.html')
+        return render(request, 'pages/feedback.html')
     
 @login_required
 def save_feedback(request):
@@ -90,7 +90,7 @@ def save_feedback(request):
     profile.feedback_results = current_feedback
     profile.save()
 
-    return render(request, 'books/feedback.html', {
+    return render(request, 'pages/feedback.html', {
         'feedback': profile.feedback_results,  # Display the latest state of feedback results
         'save_success': True  # Trigger confirmation messages on the template
     })

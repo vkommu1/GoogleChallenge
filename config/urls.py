@@ -22,10 +22,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', RedirectView.as_view(url="/books/home"), name='home'),
+    path('', RedirectView.as_view(url="/api/home"), name='home'),
     path('accounts/', include('allauth.urls')),
-    path("books/", include("books.urls", namespace="books")),
     path("users/", include("users.urls", namespace="users")),
     path("profiles/", include("profiles.urls", namespace="profiles")),
+    path("api/", include('api_interaction.urls', namespace = "api_interaction")),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

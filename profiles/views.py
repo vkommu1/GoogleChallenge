@@ -4,7 +4,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from reviews.models import Review
 from profiles.models import UserProfile
 from .forms import ProfilePictureForm
 import json
@@ -18,10 +17,8 @@ def profile(request, user_id):
         except:
             profile = UserProfile.objects.create(user=profile_user)
         
-        reviews = Review.objects.filter(user=profile_user)
         context =  {
             'profile_user': profile_user,
-            'reviews': reviews,
             'profile': profile,
             'feedback_results': profile.feedback_results if profile.feedback_results else {}, 
         }
@@ -42,18 +39,10 @@ def user_profile(request, user_id):
         except:
             profile = UserProfile.objects.create(user=profile_user)
             
-        reviews = Review.objects.filter(user=profile_user)
-        followed_fav_books = set()
-        for followed_user in profile.followed_users.all():
-            for book in followed_user.favorite_books.all():
-                if book not in followed_fav_books:
-                    followed_fav_books.add(book)
         feedback_results = profile.feedback_results if profile.feedback_results else {}
         context =  {
             'profile_user': profile_user,
-            'reviews': reviews,
             'profile': profile,
-            'followed_fav_books': followed_fav_books,
             'feedback_results': feedback_results,
         }
         return render(request, 'profiles/user-profile.html', context)

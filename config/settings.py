@@ -44,8 +44,6 @@ INSTALLED_APPS = [
 
     'django_extensions',
 
-    'books.apps.BooksConfig',
-    'reviews.apps.ReviewsConfig',
     'profiles.apps.ProfilesConfig'
 ]
 
@@ -145,7 +143,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = "/books/home"
-ACCOUNT_LOGOUT_REDIRECT_URL ="/books/home"
+LOGIN_REDIRECT_URL = "/api/home"
+ACCOUNT_LOGOUT_REDIRECT_URL ="/api/home"
 
 LOGIN_URL = 'users:login'
