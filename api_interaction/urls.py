@@ -8,5 +8,5 @@ app_name = "api_interaction"
 
 urlpatterns = [
     path("", views.Home, name="home_page"),
-    path("feedback/",  views.generate_feedback, name="generate_feedback"), 
+    path("feedback/",  views.generate_feedback, name="generate_feedback")
 ]

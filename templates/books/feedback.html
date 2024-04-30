@@ -26,6 +26,16 @@
             <h2>Generated Feedback:</h2>
             <p>{{ feedback }}</p>
         {% endif %}
+
+        {% if real_world_proportions %}
+            <h2>Real-World Proportions:</h2>
+            <p> {{real_world_proportions}}</p>
+        {% endif %}
+
+        {% if uniform %}
+        <h2>Uniform:</h2>
+        <p> {{uniform}}</p>
+    {% endif %}
     {% endif %}
 </body>
 </html>
