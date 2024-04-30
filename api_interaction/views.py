@@ -16,6 +16,7 @@ import re
 from olclient.openlibrary import OpenLibrary
 from django.shortcuts import redirect
 import uuid
+from django.urls import reverse
 
 
 def Home(request):
@@ -100,5 +101,5 @@ def delete_feedback(request, unique_id):
         profile = UserProfile.objects.get(user=request.user)
         profile.feedback_results = [feedback for feedback in profile.feedback_results if feedback.get('unique_id') != unique_id]
         profile.save()
-        return redirect('home')  # Redirect to the profile page or wherever appropriate
+        return redirect(reverse('profiles:user-profile', args=[request.user.id]))  # Redirect to the user profile page
     return redirect('home')  # Redirect somewhere else if not POST
