@@ -18,4 +18,8 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user.id)
     
+    def save(self, *args, **kwargs):
+        if not isinstance(self.feedback_results, list):
+            self.feedback_results = []  # Ensure feedback_results is always a list
+        super(UserProfile, self).save(*args, **kwargs)
     

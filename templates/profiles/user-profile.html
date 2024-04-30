@@ -23,12 +23,15 @@
     <h2 class="header-1">Feedback Results</h2>
     {% if feedback_results %}
     <div>
-        <p>Uniform: {{ feedback_results.uniform }}</p>
-        <p>Real World Proportions: {{ feedback_results.real_world_proportions }}</p>
-    </div>
-    {% else %}
+        {% for feedback in feedback_results %}
+            <p>Uniform: {{ feedback.uniform }}</p>
+            <p>Real World Proportions: {{ feedback.real_world_proportions }}</p>
+        {% endfor %}
+    </div>  
+  {% else %}
     <p>No feedback results available.</p>
-    {% endif %}
+  {% endif %}
+
     
     <h2 class="header-1">Following:</h2>
     <div class="lsection-text">

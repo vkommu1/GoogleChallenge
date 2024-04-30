@@ -54,27 +54,29 @@ def generate_feedback(request):
     
 @login_required
 def save_feedback(request):
-    print("here")
     user_id = request.user.id
     profile_user = User.objects.get(pk=user_id)
 
     profile, created = UserProfile.objects.get_or_create(user=profile_user)
 
+    # Ensuring the feedback_results is a list before appending
+    current_feedback = profile.feedback_results if isinstance(profile.feedback_results, list) else []
 
+    new_uniform = request.POST.get('uniform')
+    new_real_world_proportions = request.POST.get('real_world_proportions')
 
-    uniform = request.POST.get('uniform')
-    real_world_proportions = request.POST.get('real_world_proportions')
-    
-    profile.feedback_results = {
-        'uniform': uniform,
-        'real_world_proportions': real_world_proportions
+    new_feedback = {
+        'uniform': new_uniform,
+        'real_world_proportions': new_real_world_proportions
     }
 
+    current_feedback.append(new_feedback)
 
+    profile.feedback_results = current_feedback
     profile.save()
-    
+
     return render(request, 'books/feedback.html', {
         'input_text': request.POST.get('user_input', ''),
-        'feedback': profile.feedback_results,  # or any other context needed for the feedback page
-        'save_success': True  # You can use this to trigger confirmation messages on the template
+        'feedback': profile.feedback_results,  # Display the latest state of feedback results
+        'save_success': True  # Trigger confirmation messages on the template
     })
