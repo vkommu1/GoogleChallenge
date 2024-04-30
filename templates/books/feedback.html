@@ -37,5 +37,13 @@
         <p> {{uniform}}</p>
     {% endif %}
     {% endif %}
+
+    <form method="post" action="{% url 'api_interaction:save_feedback' %}">
+    {% csrf_token %}
+    <input type="hidden" name="uniform" value="{{ uniform|safe }}">
+    <input type="hidden" name="real_world_proportions" value="{{ real_world_proportions|safe }}">
+    <button type="submit">Save Results</button>
+    </form>
 </body>
 </html>
+

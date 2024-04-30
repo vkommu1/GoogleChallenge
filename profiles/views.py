@@ -7,6 +7,7 @@ from django.urls import reverse
 from reviews.models import Review
 from profiles.models import UserProfile
 from .forms import ProfilePictureForm
+import json
 
 def profile(request, user_id):
     profile_user = User.objects.get(pk=user_id)
@@ -22,6 +23,7 @@ def profile(request, user_id):
             'profile_user': profile_user,
             'reviews': reviews,
             'profile': profile,
+            'feedback_results': profile.feedback_results if profile.feedback_results else {}, 
         }
         if signed_in_user.is_authenticated:
             try: 
@@ -46,11 +48,13 @@ def user_profile(request, user_id):
             for book in followed_user.favorite_books.all():
                 if book not in followed_fav_books:
                     followed_fav_books.add(book)
+        feedback_results = profile.feedback_results if profile.feedback_results else {}
         context =  {
             'profile_user': profile_user,
             'reviews': reviews,
             'profile': profile,
             'followed_fav_books': followed_fav_books,
+            'feedback_results': feedback_results,
         }
         return render(request, 'profiles/user-profile.html', context)
     return None

@@ -13,7 +13,9 @@ class UserProfile(models.Model):
     favorite_books = models.ManyToManyField(Book, blank=True)
     followed_users = models.ManyToManyField("self", blank=True, related_name="following", symmetrical=False)
     follower_users = models.ManyToManyField("self", blank=True, related_name="followers", symmetrical=False)
+    feedback_results = models.JSONField(blank=True, null = True)
 
     def __str__(self):
         return str(self.user.id)
+    
     
