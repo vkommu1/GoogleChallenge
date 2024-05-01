@@ -3,8 +3,14 @@
         <a href="{% url 'api_interaction:home_page' %}">
             <button type="home" class="nav-button">Home</button>
         </a>
-    </span>
 
+        <a href="{% url 'api_interaction:generate_feedback' %}">
+            <button type="feedback" class="nav-button">Model Test</button>
+        </a>
+        <a href="{% url 'api_interaction:about_me' %}">
+            <button type="feedback" class="nav-button">About Me</button>
+        </a>
+    </span>
     
     <span class="login-status">
         {% if user.is_authenticated %}

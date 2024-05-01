@@ -1,11 +1,14 @@
 .content-section {
-  background-color: #e1ebe7;
+  background-color: #cec9cb;
   padding-bottom: 1vh;
   padding-top: 5vh;
+  margin-top: 20px;
+  border-radius: 5%;
+  padding-bottom: 100px;
 }
 .user-back{
     text-align:center;
-    -webkit-text-stroke: 2px #426053;
+    -webkit-text-stroke: 2px #999699;
 
     font-family: 'Poppins';
     font-style: normal;
@@ -14,7 +17,7 @@
     line-height: 75px;
     margin: 0px;
 
-    color: #afe0c8;
+    color: #dfdce4;
     font-size: 40px;
     font-family:"Poppins", sans-serif;
     font-weight: 800;
@@ -29,6 +32,7 @@
     width: 200px;
     height: 200px;
     margin: auto;
+    
 }
 .square img{
   display: block;
@@ -36,87 +40,15 @@
   height: 100%;
   object-fit: cover;
 }
-.my-fav-book{
-    margin: 25px 20px;
-    justify-content: center;
-    background-color: rgb(214, 227, 238); /* Set the background color */
-    color: black; /* Set the text color */
-    text-decoration: none;
-    border-radius: 4px; /* Add some border radius for rounded corners */
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    font-weight:normal;
-    font-size: 15px;
-    max-width:fit-content;
-}
-.rev-for{
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    font-weight:normal;
-    font-size: 15px;
-}
-.user-title{
-  padding: 5px 10px;
-  background-color: white; /* Set the background color */
-  color: black; /* Set the text color */
-  text-decoration: none;
-  border-radius: 4px; /* Add some border radius for rounded corners */
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
-  font-weight:normal;
-  font-size: 15px;
-  max-width:fit-content;
-  display: flex;
-  justify-content: center;
-  margin-left: 20px;
-}
-a.user-title:hover {
-  background-color: #f2f2f2; /* Set the background color on hover */
-}
-.rand-title{
-    padding: 5px 10px;
-    background-color: rgb(214, 227, 238); /* Set the background color */
-    color: black; /* Set the text color */
-    text-decoration: none;
-    border-radius: 4px; /* Add some border radius for rounded corners */
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    font-weight:normal;
-    font-size: 15px;
-    max-width:fit-content;
-}
-a.rand-title:hover{
-  background-color: #cbd8e6; /* Set the background color on hover */
-}
+
+
 form {
     align-items: center;
     justify-content: center;
+    
   }
 
-  .follow-button {
-    padding: 5px 10px;
-    background-color: white; /* Set the background color */
-    color: black; /* Set the text color */
-    text-decoration: none;
-    border-radius: 4px; /* Add some border radius for rounded corners */
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    font-weight:normal;
-    font-size: 12px;
-    max-width:fit-content;
-    display: block;
-    margin: 0 auto;
-    margin-top:1em;
-  }
-
-.no-follower{
-  margin: 25px 20px;
-    justify-content: center;
-    background-color: rgb(214, 227, 238); /* Set the background color */
-    color: black; /* Set the text color */
-    text-decoration: none;
-    border-radius: 4px; /* Add some border radius for rounded corners */
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    font-weight:normal;
-    font-size: 15px;
-    max-width:fit-content;
-}
-
+  
 .add-pfp {
     padding: 5px 10px;
     background-color: white; /* Set the background color */
@@ -132,65 +64,10 @@ form {
     margin-top:2vh;
   }
 
-  .grid-container {
-    padding-top: 1vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px;
-    background-color: #e1ebe7;
-  }
-  .left-s {
-    flex: 1;
-    margin-right: 20px;
-    margin-left: 20px;
-    margin-bottom: 20px;
-    background-color: #c6dfd6;
-  }
-  .right-s {
-    flex: 1;
-    height: 85vh;
-    background-color: #c6dfd6;
-    padding-left: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-left: 20px;
-    margin-bottom: 20px
-  }
-  .review-block {
-    height: 70vh; /* Set a fixed height for the right section */
-    overflow: auto; /* Enable scrolling when content overflows */
-    position: relative;
-  }
+  
 
-  .ff-cont {
-    padding-top: 0px;
-    padding-bottom: 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    height: 25vh;
-  }
-  .lsection {
-    flex: 1;
-    height: 25vh; /* Set a fixed height for the right section */
-  }
-  .lsection-text {
-    height: 18vh; /* Set a fixed height for the right section */
-    overflow: auto; /* Enable scrolling when content overflows */
-  }
-  .rsection {
-    flex: 1;
-    height: 25vh; /* Set a fixed height for the right section */
-  }
-  .rsection-text {
-    height: 18vh; /* Set a fixed height for the right section */
-    overflow: auto; /* Enable scrolling when content overflows */
-  }
+  
 
-.rating-prof{
-    font-family:Verdana;
-    font-size: 12px;
-}
 .header-1{
     padding:10px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -202,26 +79,4 @@ form {
     margin-bottom: 5px;
     margin-left:20px;
 }
-.header-2{
-    padding:10px;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-size: 25px;
-    background-color: #F0F0F0; 
-    border-radius: 10px; 
-    max-width: fit-content;
-    margin-top: 30px;
-}
-.edit-rev {
-    font-family: Verdana;
-    text-transform: lowercase;
-    color: black;
-    background-color: white;
 
-    padding: 5px 10px;
-    border: none;
-    border-radius: 10px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    margin-bottom:20px;
-}

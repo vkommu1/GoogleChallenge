@@ -1,0 +1,55 @@
+
+{% extends 'base.html' %}
+
+
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/about_me.css' %}">
+{% endblock %}
+
+
+{% block head %}
+    <title>About Me</title>
+{% endblock %}
+
+{% block content %}
+<div class = "site-container">
+    <div class="about-me-container">
+        <div class="about-me-image">
+            <img src="/media/logo/VeenaKommu.png" alt="Logo">
+        </div>
+        <div class="about-me-info">
+            <h2>About Me</h2>
+            <p>
+            Hello 👋 My name is Veena Kommu! 
+            I am a second year Computer Science and Engineering Student at UCLA. 
+            Some of my hobbies include running, playing with my dog Argo, and trying new food with friends :D.
+            </p>
+            <h2>Profiles</h2>
+            <div class="about-me-links">
+                <a href="https://github.com/vkommu1" target="_blank">
+                    <img src="/media/logo/github.png" alt="Logo">
+                </a>
+                <a href="https://www.linkedin.com/in/veenakommu/" target="_blank">
+                    <img src="/media/logo/linkedin_logo.png" alt="Logo">
+                </a>
+                <a href="mailto:vkommu@g.ucla.edu">
+                    <img src="/media/logo/mail_logo.png" alt="Logo">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="message-statement-container">
+        <div class="message-statement-info">
+            <h1>Message Statement</h1>
+            <p>
+            HI
+            </p>
+            <h2>Disclaimer</h2>
+            <p>
+            HI again
+            </p>
+    </div>
+</div>
+{% endblock %}

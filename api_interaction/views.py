@@ -22,39 +22,74 @@ from django.urls import reverse
 def Home(request):
     return render(request, 'pages/home.html')
 
+def about_me(request):
+    return render(request, 'pages/about_me.html')
+
+
 def generate_feedback(request):
     if request.method == 'POST':
         user_input = request.POST.get('user_input', '')
         feature_1 = request.POST.get('feature_1', '')
         feature_2 = request.POST.get('feature_2', '')
 
-        # Call the service function to process the input and generate feedback
-        response = run_queries_and_store_results(1, user_input, feature_1, feature_2)
-
-
+        feedback = run_queries_and_store_results(1, user_input, feature_1, feature_2)
         real_world_proportions = get_real_world_proportions(user_input, feature_1, feature_2)
-
         uniform_prop = uniform_proportions(user_input, feature_1, feature_2)
-        # Render an HTML template with the feedback included
+
+        # Data for feedback charts
+        feature_1_feedback = feedback.get(feature_1, {})
+        feature_1_labels = list(feature_1_feedback.keys())
+        feature_1_label = json.dumps(feature_1_labels) 
+        feature_1_data = list(feature_1_feedback.values())
+        feature_1_datas = json.dumps(feature_1_data)
+
+        feature_2_feedback = feedback.get(feature_2, {})
+        feature_2_labels = list(feature_2_feedback.keys())
+        feature_2_label = json.dumps(feature_2_labels) 
+        feature_2_data = list(feature_2_feedback.values())
+        feature_2_datas = json.dumps(feature_2_data)
+
+
+        # Data for real-world proportions charts, assuming values are already percentages
+        real_world_feature_1 = real_world_proportions.get(feature_1 + ' Proportions', {})
+        real_world_feature_1_labels = list(real_world_feature_1.keys()) + ['Other']
+        real_world_feature_1_label = json.dumps(real_world_feature_1_labels)
+        real_world_feature_1_data = list(real_world_feature_1.values()) + [100 - sum(real_world_feature_1.values())]
+        real_world_feature_1_datas = json.dumps(real_world_feature_1_data)
+
+
+        real_world_feature_2 = real_world_proportions.get(feature_2 + ' Proportions', {})
+        real_world_feature_2_labels = list(real_world_feature_2.keys()) + ['Other']
+        real_world_feature_2_label = json.dumps(real_world_feature_2_labels)
+        real_world_feature_2_data = list(real_world_feature_2.values()) + [100 - sum(real_world_feature_2.values())]
+        real_world_feature_2_datas = json.dumps(real_world_feature_2_data)
+
         results = {
             'uniform': uniform_prop,
             'real_world': real_world_proportions
         }
-        
+
         results_json = json.dumps(results)
+
 
         return render(request, 'pages/feedback.html', {
             'input_text': user_input,
-            'feedback': response,
+            'results_json': results_json,
+            'feedback': feedback,
             'feature_1': feature_1,
             'feature_2': feature_2,
             'real_world_proportions': real_world_proportions,
             'uniform': uniform_prop,
-            'results_json': results_json,
-            'save_success': False       
+            'feature_1_labels': feature_1_label,
+            'feature_1_data': feature_1_datas,
+            'feature_2_labels': feature_2_label,
+            'feature_2_data': feature_2_datas,
+            'real_world_feature_1_labels': real_world_feature_1_label,
+            'real_world_feature_1_data': real_world_feature_1_datas,
+            'real_world_feature_2_labels': real_world_feature_2_label,
+            'real_world_feature_2_data': real_world_feature_2_datas,
         })
     else:
-        # If the request method is not POST, render the form template
         return render(request, 'pages/feedback.html')
     
 @login_required
