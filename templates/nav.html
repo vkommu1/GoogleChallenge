@@ -8,7 +8,11 @@
             <button type="feedback" class="nav-button">Model Test</button>
         </a>
         <a href="{% url 'api_interaction:about_me' %}">
-            <button type="feedback" class="nav-button">About Me</button>
+            <button type="feedback" class="nav-button">About</button>
+        </a>
+
+        <a href="{% url 'api_interaction:gpt_generate_feedback' %}">
+            <button type="feedback" class="nav-button">Compare Models</button>
         </a>
     </span>
     

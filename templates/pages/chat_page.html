@@ -177,7 +177,7 @@
         </div>
         
 
-        <form method="post"  enctype="multipart/form-data" action="{% url 'api_interaction:save_feedback' %}">
+        <form method="post"  enctype="multipart/form-data" action="{% url 'api_interaction:save_gpt_feedback' %}">
             {% csrf_token %}
             <input type="hidden" name="input_text" value="{{ input_text|safe }}">
             <input type="hidden" name="feature_1" value="{{ feature_1|safe }}">
