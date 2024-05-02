@@ -4,15 +4,15 @@
 
 {% block head %}
     <title>Model Generating Form</title>
-    <link rel="stylesheet" href="{% static 'feedback.css' %}">
+    <link rel="stylesheet" href="{% static 'chat_page.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
 <div class="feedback-form-container">
     <div class="just-feedback">
-        <h1 class="form-text-head">Prompt Gemini</h1>
-        <form action="/api/feedback/" method="post" class="feedback-form">
+        <h1 class="form-text-head">Prompt GPT</h1>
+        <form action="/api/gpt_feedback/" method="post" class="feedback-form">
             {% csrf_token %}
             <label for="user_input" class="form-text">Give me a:</label>
             <input type="text" id="user_input" name="user_input" placeholder="subject">
@@ -44,13 +44,13 @@
         {% for key, values in real_world_proportions.items %}
         <h3>{{ key|capfirst }}</h3>
         {% for sub_key, proportion in values.items %}
-        <p>Gemini Found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{input_text}}</p>
+        <p>GPT Found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{input_text}}</p>
         {% endfor %}
         {% endfor %}
         {% endif %}
 
         {% if uniform %}
-        <h2>All Outputs Gemini Thought of:</h2>
+        <h2>All Outputs GPT Thought of:</h2>
         {% for key, items in uniform.items %}
         <h3>{{ key|capfirst }}</h3>
         <ul>
@@ -66,19 +66,19 @@
 
         <div class="chart-container">
             <div class="feature1-charts">
-                <h3>Gemini's Output for {{ feature_1 }}</h3>
+                <h3>GPT's Output for {{ feature_1 }}</h3>
                 <canvas id="feature1Chart" width="8px" height="8px"></canvas>
             </div>
             <div class="feature2-charts">
-                <h3>Gemini's Output for {{ feature_2 }}</h3>
+                <h3>GPT's Output for {{ feature_2 }}</h3>
                 <canvas id="feature2Chart" width="8px" height="8px"></canvas>
             </div>
             <div class="real-world-feature1-charts">
-                <h3>Gemini's Real World Proportions for {{ feature_1 }}</h3>
+                <h3>GPT's Real World Proportions for {{ feature_1 }}</h3>
                 <canvas id="realWorldFeature1Chart" width="8px" height="8px"></canvas>
             </div>
             <div class="real-world-feature2-charts">
-                <h3>Gemini's Real World Proportions for {{ feature_2 }}</h3>
+                <h3>GPT's Real World Proportions for {{ feature_2 }}</h3>
                 <canvas id="realWorldFeature2Chart" width="8px" height="8px"></canvas>
             </div>
         </div>
@@ -175,7 +175,6 @@
             </script>
             
         </div>
-
         
 
         <form method="post"  enctype="multipart/form-data" action="{% url 'api_interaction:save_feedback' %}">
@@ -184,7 +183,7 @@
             <input type="hidden" name="feature_1" value="{{ feature_1|safe }}">
             <input type="hidden" name="feature_2" value="{{ feature_2|safe }}">
             <input type="hidden" name="feedback" value="{{ feedback|safe }}">
-            <input type="hidden" name="uniform" value="{{ uniform|safe }}">
+            <input type="hidden" name="uniform" value="{{uniform}}">
             <input type="hidden" name="real_world_proportions" value="{{ real_world_proportions|safe }}">
             <input type="hidden" name="feature_1_labels" value="{{ feature_1_labels|safe }}">
             <input type="hidden" name="feature_1_data" value="{{ feature_1_data|safe }}">
