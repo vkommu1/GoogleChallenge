@@ -233,7 +233,7 @@ def save_feedback(request):
         'real_world_feature_1_data': real_world_feature_1_data,
         'real_world_feature_2_labels': real_world_feature_2_label,
         'real_world_feature_2_data': real_world_feature_2_data,
-        'unique_id': str(uuid.uuid4())
+        'unique_id': str(uuid.uuid4()).replace('-', '')
     }
 
     current_feedback.append(new_feedback_entry)
@@ -322,7 +322,7 @@ def save_gpt_feedback(request):
         'real_world_feature_1_data': real_world_feature_1_data,
         'real_world_feature_2_labels': real_world_feature_2_label,
         'real_world_feature_2_data': real_world_feature_2_data,
-        'unique_id': str(uuid.uuid4())
+        'unique_id': str(uuid.uuid4()).replace('-', '')
     }
 
     current_feedback.append(new_feedback_entry)

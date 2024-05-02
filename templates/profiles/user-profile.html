@@ -65,22 +65,24 @@
                 {% endfor %}
                 {% endif %}
 
+
+                
                 <div class="charts-containers">
                   <div class="charts">
                       <h3>Feedback Distribution for {{feedback.feature_1}}</h3>
-                      <canvas id="feature1Chart_{{ feedback.id }}"></canvas>
+                      <canvas id="feature1Chart_{{ feedback.unique_id }}"></canvas>
                   </div>
                   <div class="charts">
                     <h3>Real World Proportions for {{feedback.feature_1}}</h3>
-                    <canvas id="realWorldFeature1Chart_{{ feedback.id }}" width="8px" height="8px"></canvas>
+                    <canvas id="realWorldFeature1Chart_{{ feedback.unique_id }}" width="8px" height="8px"></canvas>
                 </div>
                   <div class="charts">
                       <h3>Feedback Distribution for {{feedback.feature_2}}</h3>
-                      <canvas id="feature2Chart_{{ feedback.id }}" width="8px" height="8px"></canvas>
+                      <canvas id="feature2Chart_{{ feedback.unique_id }}" width="8px" height="8px"></canvas>
                   </div>
                   <div class="charts">
                     <h3>Real World Proportions for {{feedback.feature_2}}</h3>
-                    <canvas id="realWorldFeature2Chart_{{ feedback.id }}" width="8px" height="8px"></canvas>
+                    <canvas id="realWorldFeature2Chart_{{ feedback.unique_id }}" width="8px" height="8px"></canvas>
                   </div>
               </div>
             </div>
@@ -98,14 +100,20 @@
     {% else %}
         <p>No feedback results available.</p>
     {% endif %}
+
 </div>
+
+
 
 <script>
   // JavaScript code for chart initialization
       {% for feedback in feedback_results %}
           // Configuration for feature 1 feedback chart
-          var feature1Ctx_{{ feedback.id }} = document.getElementById('feature1Chart_{{ feedback.id }}').getContext('2d');
-          var feature1Chart_{{ feedback.id }} = new Chart(feature1Ctx_{{ feedback.id }}, {
+          console.log(feature1Ctx_{{ feedback.unique_id }});
+          console.log("feature1Chart_{{feedback.unique_id}}");
+
+          var feature1Ctx_{{ feedback.unique_id }} = document.getElementById('feature1Chart_{{feedback.unique_id}}').getContext('2d');
+          var feature1Chart_{{ feedback.unique_id }} = new Chart(feature1Ctx_{{ feedback.unique_id }}, {
               type: 'pie', // Change the chart type as needed
               data: {
                   labels: JSON.parse('{{ feedback.feature_1_labels|safe }}'),
@@ -123,8 +131,8 @@
           });
 
           // Configuration for feature 2 feedback chart
-          var feature2Ctx_{{ feedback.id }} = document.getElementById('feature2Chart_{{ feedback.id }}').getContext('2d');
-          var feature2Chart_{{ feedback.id }} = new Chart(feature2Ctx_{{ feedback.id }}, {
+          var feature2Ctx_{{ feedback.unique_id }} = document.getElementById('feature2Chart_{{feedback.unique_id}}').getContext('2d');
+          var feature2Chart_{{ feedback.unique_id }} = new Chart(feature2Ctx_{{ feedback.unique_id }}, {
               type: 'pie', // Change the chart type as needed
               data: {
                   labels: {{ feedback.feature_2_labels|safe }},
@@ -142,8 +150,8 @@
           });
 
           // Configuration for real world feature 1 chart
-          var realWorldFeature1Ctx_{{ feedback.id }} = document.getElementById('realWorldFeature1Chart_{{ feedback.id }}').getContext('2d');
-          var realWorldFeature1Chart_{{ feedback.id }} = new Chart(realWorldFeature1Ctx_{{ feedback.id }}, {
+          var realWorldFeature1Ctx_{{ feedback.unique_id }} = document.getElementById('realWorldFeature1Chart_{{feedback.unique_id}}').getContext('2d');
+          var realWorldFeature1Chart_{{ feedback.unique_id }} = new Chart(realWorldFeature1Ctx_{{ feedback.unique_id }}, {
               type: 'pie', // Change the chart type as needed
               data: {
                   labels: {{ feedback.real_world_feature_1_labels|safe }},
@@ -162,8 +170,8 @@
           });
 
           // Configuration for real world feature 2 chart
-          var realWorldFeature2Ctx_{{ feedback.id }} = document.getElementById('realWorldFeature2Chart_{{ feedback.id }}').getContext('2d');
-          var realWorldFeature2Chart_{{ feedback.id }} = new Chart(realWorldFeature2Ctx_{{ feedback.id }}, {
+          var realWorldFeature2Ctx_{{ feedback.unique_id }} = document.getElementById('realWorldFeature2Chart_{{feedback.unique_id}}').getContext('2d');
+          var realWorldFeature2Chart_{{ feedback.unique_id }} = new Chart(realWorldFeature2Ctx_{{ feedback.unique_id }}, {
               type: 'pie', // Change the chart type as needed
               data: {
                   labels: {{ feedback.real_world_feature_2_labels|safe }},
