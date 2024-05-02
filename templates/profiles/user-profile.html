@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block head %}
-<title>Your Profile</title>
+    <title>Your Profile</title>
+    <link rel="stylesheet" href="{% static 'user_profile.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -22,27 +26,160 @@
     
     <h2 class="header-1">Feedback Results</h2>
     {% if feedback_results %}
-    <div>
-      {%for feedback in feedback_results %}
-      <div>
-            <p>Input Text: {{feedback.input_text }}</p>
-            <p>Feature 1: {{ feedback.feature_1 }}</p>
-            <p>Feature 2: {{ feedback.feature_2 }}</p>
-            <p>Feedback: {{ feedback.feedback }}</p>
-            <p>Uniform Distribution: {{ feedback.uniform }}</p>
-            <p>Real World Proportions: {{ feedback.real_world_proportions }}</p>
+    <div class="results-container-1">
+        {% for feedback in feedback_results %}
+        <div class="feedback-item">
+            <div class="text-results">
+                <h2 class="feedback-entry-1">Input Text:</h2>
+                <p>Give me a {{ feedback.input_text }} and describe them using {{ feedback.feature_1 }} and {{ feedback.feature_2 }}</p>
+                
+                {% if feedback.feedback %}
+                <h2 class="header">Generated Values:</h2>
+                {% for key, values in feedback.feedback.items %}
+                    <h3>{{ key|capfirst }}</h3>
+                    {% for sub_key, count in values.items %}
+                        <p>{{ count }} occurrence(s) of {{ sub_key }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% endif %}
+                
+                {% if feedback.real_world_proportions %}
+                <h2>Real-World Proportions:</h2>
+                {% for key, values in feedback.real_world_proportions.items %}
+                    <h3>{{ key|capfirst }}</h3>
+                    {% for sub_key, proportion in values.items %}
+                        <p>Gemini Found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{ feedback.input_text }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% endif %}
+                
+                {% if feedback.uniform %}
+                <h2>All Outputs Gemini Thought of:</h2>
+                {% for key, items in feedback.uniform.items %}
+                    <h3>{{ key|capfirst }}</h3>
+                    <ul>
+                        {% for item in items %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+                {% endif %}
+
+                <div class="charts-containers">
+                  <div class="charts">
+                      <h3>Feedback Distribution for {{feedback.feature_1}}</h3>
+                      <canvas id="feature1Chart_{{ feedback.id }}"></canvas>
+                  </div>
+                  <div class="charts">
+                    <h3>Real World Proportions for {{feedback.feature_1}}</h3>
+                    <canvas id="realWorldFeature1Chart_{{ feedback.id }}" width="8px" height="8px"></canvas>
+                </div>
+                  <div class="charts">
+                      <h3>Feedback Distribution for {{feedback.feature_2}}</h3>
+                      <canvas id="feature2Chart_{{ feedback.id }}" width="8px" height="8px"></canvas>
+                  </div>
+                  <div class="charts">
+                    <h3>Real World Proportions for {{feedback.feature_2}}</h3>
+                    <canvas id="realWorldFeature2Chart_{{ feedback.id }}" width="8px" height="8px"></canvas>
+                  </div>
+              </div>
+            </div>
             {% if feedback.unique_id %}
             <form action="{% url 'api_interaction:delete_feedback' feedback.unique_id %}" method="post">
-              {% csrf_token %}
-              <button type="submit"> Delete </button>
+                {% csrf_token %}
+                <button type="submit"> Delete </button>
+            </form>
             {% else %}
-              <p> Warning: no unique identifier found </p>
+                <p> Warning: no unique identifier found </p>
             {% endif %}
         </div>
-      {%endfor%}
+        {% endfor %}
     </div>  
-  {% else %}
-    <p>No feedback results available.</p>
-  {% endif %}
+    {% else %}
+        <p>No feedback results available.</p>
+    {% endif %}
+</div>
 
-  {% endblock %}
+<script>
+  // JavaScript code for chart initialization
+      {% for feedback in feedback_results %}
+          // Configuration for feature 1 feedback chart
+          var feature1Ctx_{{ feedback.id }} = document.getElementById('feature1Chart_{{ feedback.id }}').getContext('2d');
+          var feature1Chart_{{ feedback.id }} = new Chart(feature1Ctx_{{ feedback.id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: JSON.parse('{{ feedback.feature_1_labels|safe }}'),
+                  datasets: [{
+                      data: JSON.parse('{{ feedback.feature_1_data|safe }}'),
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,99,132,1)', 'rgba(54, 162, 235, 1)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  title: { display: true, text: 'Feedback Distribution for {{feedback.feature_1}}' } // Customize chart title
+              }
+          });
+
+          // Configuration for feature 2 feedback chart
+          var feature2Ctx_{{ feedback.id }} = document.getElementById('feature2Chart_{{ feedback.id }}').getContext('2d');
+          var feature2Chart_{{ feedback.id }} = new Chart(feature2Ctx_{{ feedback.id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: {{ feedback.feature_2_labels|safe }},
+                  datasets: [{
+                      data: {{ feedback.feature_2_data|safe }},
+                      backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)'], // Customize colors
+                      borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  title: { display: true, text: 'Feedback Distribution for Feature 2' } // Customize chart title
+              }
+          });
+
+          // Configuration for real world feature 1 chart
+          var realWorldFeature1Ctx_{{ feedback.id }} = document.getElementById('realWorldFeature1Chart_{{ feedback.id }}').getContext('2d');
+          var realWorldFeature1Chart_{{ feedback.id }} = new Chart(realWorldFeature1Ctx_{{ feedback.id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: {{ feedback.real_world_feature_1_labels|safe }},
+                  datasets: [{
+                      data: {{ feedback.real_world_feature_1_data|safe }},
+                      backgroundColor: ['rgba(255, 159, 64, 0.6)', 'rgba(192, 192, 192, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255, 159, 64, 1)', 'rgba(192, 192, 192, 1)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  legend: { position: 'top' },
+                  title: { display: true, text: 'Real World Proportions for Feature 1' } // Customize chart title
+              }
+          });
+
+          // Configuration for real world feature 2 chart
+          var realWorldFeature2Ctx_{{ feedback.id }} = document.getElementById('realWorldFeature2Chart_{{ feedback.id }}').getContext('2d');
+          var realWorldFeature2Chart_{{ feedback.id }} = new Chart(realWorldFeature2Ctx_{{ feedback.id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: {{ feedback.real_world_feature_2_labels|safe }},
+                  datasets: [{
+                      data: {{ feedback.real_world_feature_2_data|safe }},
+                      backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(192, 192, 192, 0.6)'], // Customize colors
+                      borderColor: ['rgba(54, 162, 235, 1)', 'rgba(192, 192, 192, 1)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  legend: { position: 'top' },
+                  title: { display: true, text: 'Real World Proportions for Feature 2' } // Customize chart title
+              }
+          });
+      {% endfor %}
+</script>
+{% endblock %}

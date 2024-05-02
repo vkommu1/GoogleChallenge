@@ -127,13 +127,11 @@ def uniform_proportions(user_input, feature_1, feature_2):
     generated_feedback_1 = model.generate_content(prompt_feature_1)
     response_1 = generated_feedback_1.text.strip().split('\n')
 
-    print(response_1)
 
     prompt_feature_2 = f"generate all possible popular responses of {feature_2} in {user_input}. IMPORTANT: all English"
     generated_feedback_2 = model.generate_content(prompt_feature_2)
     response_2 = generated_feedback_2.text.strip().split('\n')
 
-    print(response_2)
     results = {
         feature_1: response_1, 
         feature_2: response_2

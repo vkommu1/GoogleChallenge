@@ -32,7 +32,7 @@ def generate_feedback(request):
         feature_1 = request.POST.get('feature_1', '')
         feature_2 = request.POST.get('feature_2', '')
 
-        feedback = run_queries_and_store_results(1, user_input, feature_1, feature_2)
+        feedback = run_queries_and_store_results(25, user_input, feature_1, feature_2)
         real_world_proportions = get_real_world_proportions(user_input, feature_1, feature_2)
         uniform_prop = uniform_proportions(user_input, feature_1, feature_2)
 
@@ -56,7 +56,7 @@ def generate_feedback(request):
         real_world_feature_1_label = json.dumps(real_world_feature_1_labels)
         real_world_feature_1_data = list(real_world_feature_1.values()) + [100 - sum(real_world_feature_1.values())]
         real_world_feature_1_datas = json.dumps(real_world_feature_1_data)
-
+        
 
         real_world_feature_2 = real_world_proportions.get(feature_2 + ' Proportions', {})
         real_world_feature_2_labels = list(real_world_feature_2.keys()) + ['Other']
@@ -94,40 +94,88 @@ def generate_feedback(request):
     
 @login_required
 def save_feedback(request):
-    print(request.POST)
     user_id = request.user.id
     profile_user = User.objects.get(pk=user_id)
 
     profile, created = UserProfile.objects.get_or_create(user=profile_user)
 
     # Ensuring the feedback_results is a list before appending
-    current_feedback = profile.feedback_results if isinstance(profile.feedback_results, list) else []  
+    current_feedback = profile.feedback_results if isinstance(profile.feedback_results, list) else [] 
 
-    new_input_text = request.POST.get('input_text', '')
-    new_feature_1 = request.POST.get('feature_1', '')
-    new_feature_2 = request.POST.get('feature_2', '')
-    new_feedback = request.POST.get('feedback', '')
-    new_uniform = request.POST.get('uniform')
-    new_real_world_proportions = request.POST.get('real_world_proportions')
+    
+    new_input_text = request.POST.get('input_text')
+    new_feature_1 = request.POST.get('feature_1')
+    new_feature_2 = request.POST.get('feature_2')
 
-    new_feedback = {
+    new_feedback_str = request.POST.get('feedback', '{}')
+    new_feedback_str_fixed = new_feedback_str.replace("'", '"')
+    new_feedback = json.loads(new_feedback_str_fixed)
+
+    new_uniform_str = request.POST.get('uniform')
+    new_uniform_str_fixed = new_uniform_str.replace("'", '"')
+    new_uniform = json.loads(new_uniform_str_fixed)
+
+    new_real_world_proportions_str = request.POST.get('real_world_proportions', '{}')
+    new_real_world_proportions_str_fixed = new_real_world_proportions_str.replace("'", '"')
+    new_real_world_proportions = json.loads(new_real_world_proportions_str_fixed)
+
+
+
+    # Data for feedback charts
+    feature_1_feedback = new_feedback.get(new_feature_1, {})
+    feature_1_labels = list(feature_1_feedback.keys())
+    feature_1_label = json.dumps(feature_1_labels) 
+    feature_1_data = list(feature_1_feedback.values())
+    feature_1_datas = json.dumps(feature_1_data)
+
+    feature_2_feedback = new_feedback.get(new_feature_2, {})
+    feature_2_labels = list(feature_2_feedback.keys())
+    feature_2_label = json.dumps(feature_2_labels) 
+    feature_2_data = list(feature_2_feedback.values())
+    feature_2_datas = json.dumps(feature_2_data)
+
+
+    # Data for real-world proportions charts, assuming values are already percentages
+    real_world_feature_1 = new_real_world_proportions.get(new_feature_1 + ' Proportions', {})
+    real_world_feature_1_labels = list(real_world_feature_1.keys()) + ['Other']
+    real_world_feature_1_label = json.dumps(real_world_feature_1_labels)
+    real_world_feature_1_data = list(real_world_feature_1.values()) + [100 - sum(real_world_feature_1.values())]
+    real_world_feature_1_datas = json.dumps(real_world_feature_1_data)
+    
+
+    real_world_feature_2 = new_real_world_proportions.get(new_feature_2 + ' Proportions', {})
+    real_world_feature_2_labels = list(real_world_feature_2.keys()) + ['Other']
+    real_world_feature_2_label = json.dumps(real_world_feature_2_labels)
+    real_world_feature_2_data = list(real_world_feature_2.values()) + [100 - sum(real_world_feature_2.values())]
+    real_world_feature_2_datas = json.dumps(real_world_feature_2_data)
+
+
+
+    new_feedback_entry = {
         'input_text': new_input_text,
         'feature_1': new_feature_1,
         'feature_2': new_feature_2,
         'feedback': new_feedback,
         'uniform': new_uniform,
         'real_world_proportions': new_real_world_proportions,
+        'feature_1_labels': feature_1_label,
+        'feature_1_data': feature_1_data,
+        'feature_2_labels': feature_2_label,
+        'feature_2_data': feature_2_data,
+        'real_world_feature_1_labels': real_world_feature_1_label,
+        'real_world_feature_1_data': real_world_feature_1_data,
+        'real_world_feature_2_labels': real_world_feature_2_label,
+        'real_world_feature_2_data': real_world_feature_2_data,
         'unique_id': str(uuid.uuid4())
     }
 
-    current_feedback.append(new_feedback)
-
+    current_feedback.append(new_feedback_entry)
     profile.feedback_results = current_feedback
     profile.save()
 
     return render(request, 'pages/feedback.html', {
-        'feedback': profile.feedback_results,  # Display the latest state of feedback results
-        'save_success': True  # Trigger confirmation messages on the template
+        'feedback': profile.feedback_results,
+        'save_success': True
     })
 
 @login_required
