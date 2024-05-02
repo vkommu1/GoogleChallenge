@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .views import save_gpt_feedback, chat_page, generate_feedback, save_feedback, delete_feedback, about_me, Home
+from .views import compare_results, save_gpt_feedback, chat_page, generate_feedback, save_feedback, delete_feedback, about_me, Home
 
 app_name = "api_interaction"
 
@@ -12,5 +12,6 @@ urlpatterns = [
     path("gpt_feedback/", chat_page, name="gpt_generate_feedback"), 
     path("save_feedback/", save_feedback, name='save_feedback'),
     path("save_gpt_feedback/", save_gpt_feedback, name='save_gpt_feedback'),
+    path("compare/",compare_results, name="compare_results"),
     path('delete_feedback/<str:unique_id>/', delete_feedback, name='delete_feedback'),
 ]

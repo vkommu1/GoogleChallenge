@@ -93,8 +93,8 @@
                         labels: JSON.parse('{{ feature_1_labels|safe }}'),
                         datasets: [{
                             data: JSON.parse('{{ feature_1_data|safe }}'),
-                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)'],
-                            borderColor: ['rgba(255,99,132,1)', 'rgba(54, 162, 235, 1)'],
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'],
                             borderWidth: 1
                         }]
                     },
@@ -112,8 +112,8 @@
                         labels: JSON.parse('{{ feature_2_labels|safe }}'),
                         datasets: [{
                             data: JSON.parse('{{ feature_2_data|safe }}'),
-                            backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)'],
-                            borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'],
                             borderWidth: 1
                         }]
                     },
@@ -131,8 +131,8 @@
                         labels: JSON.parse('{{ real_world_feature_1_labels|safe }}'),
                         datasets: [{
                             data: JSON.parse('{{ real_world_feature_1_data|safe }}'),
-                            backgroundColor: ['rgba(255, 159, 64, 0.6)', 'rgba(192, 192, 192, 0.6)'],
-                            borderColor: ['rgba(255, 159, 64, 1)', 'rgba(192, 192, 192, 1)'],
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'],
                             borderWidth: 1
                         }]
                     },
@@ -156,8 +156,8 @@
                         labels: JSON.parse('{{ real_world_feature_2_labels|safe }}'),
                         datasets: [{
                             data: JSON.parse('{{ real_world_feature_2_data|safe }}'),
-                            backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(192, 192, 192, 0.6)'],
-                            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(192, 192, 192, 1)'],
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'], 
                             borderWidth: 1
                         }]
                     },
@@ -180,6 +180,7 @@
         <form method="post"  enctype="multipart/form-data" action="{% url 'api_interaction:save_gpt_feedback' %}">
             {% csrf_token %}
             <input type="hidden" name="input_text" value="{{ input_text|safe }}">
+            <input type="hidden" name="model_name" value="{{ model_name|safe }}">
             <input type="hidden" name="feature_1" value="{{ feature_1|safe }}">
             <input type="hidden" name="feature_2" value="{{ feature_2|safe }}">
             <input type="hidden" name="feedback" value="{{ feedback|safe }}">

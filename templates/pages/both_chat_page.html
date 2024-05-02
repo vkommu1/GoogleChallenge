@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block head %}
+    <title>Model Generating Form</title>
+    <link rel="stylesheet" href="{% static 'chat_page.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="feedback-form-container">
+    <div class="just-feedback">
+        <h1 class="form-text-head">Compare GPT and Gemini</h1>
+        <form action="/api/compare/" method="post" class="feedback-form">
+            {% csrf_token %}
+            <label for="user_input" class="form-text">Give me a:</label>
+            <input type="text" id="user_input" name="user_input" placeholder="subject">
+            <label for="feature_1" class="form-text">and describe them using:</label>
+            <input type="text" id="feature_1" name="feature_1" placeholder="first feature">
+            <input type="text" id="feature_2" name="feature_2" placeholder="second feature">
+            <input type="submit" class="save-button" value="Submit">
+        </form>
+    </div>
+
+    <h1 class = "h1-header"> Comparison Results </h1>
+    {% if input_text %}
+    <div class="results-container">
+        <h2 class="prompt">Prompt: {{ input_text }} described using {{ feature_1 }} and {{ feature_2 }}</h2>
+        
+        <!-- GPT Feedback -->
+        {% if gpt_feedback.feedback %}
+        <div class="gpt-feedback">
+            <h2>GPT Generated Values:</h2>
+            {% for key, values in gpt_feedback.feedback.items %}
+            <h3>{{ key|capfirst }}</h3>
+            {% for sub_key, count in values.items %}
+            <p>{{count}} occurrence(s) of {{ sub_key }}</p>
+            {% endfor %}
+            {% endfor %}
+        </div>
+        
+        <div class="gpt-real-world">
+            <h2>GPT Real World Proportion:</h2>
+            {% if gpt_feedback.real_world_proportions %}
+            {% for key, values in gpt_feedback.real_world_proportions.items %}
+            <h3>{{ key|capfirst }}</h3>
+            {% for sub_key, proportion in values.items %}
+            <p>GPT Found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{input_text}}</p>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        
+        <div class="gpt-uniform">
+            <h2>All Outputs GPT Thought of:</h2>
+            {% if gpt_feedback.uniform %}
+            {% for key, items in gpt_feedback.uniform.items %}
+            <h3>{{ key|capfirst }}</h3>
+            <ul>
+                {% for item in items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+
+
+        <div class="chart-container">
+            <div class="feature1-charts">
+                <h3>GPT's Output for {{ feature_1 }}</h3>
+                <canvas id="GPTfeature1Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="feature2-charts">
+                <h3>GPT's Output for {{ feature_2 }}</h3>
+                <canvas id="GPTfeature2Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="real-world-feature1-charts">
+                <h3>GPT's Real World Proportions for {{ feature_1 }}</h3>
+                <canvas id="GPTrealWorldFeature1Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="real-world-feature2-charts">
+                <h3>GPT's Real World Proportions for {{ feature_2 }}</h3>
+                <canvas id="GPTrealWorldFeature2Chart" width="8px" height="8px"></canvas>
+            </div>
+        </div>
+
+
+        <script>
+            // Setup for feature 1 feedback chart
+            var feature1Ctx = document.getElementById('GPTfeature1Chart').getContext('2d');
+            var feature1Chart = new Chart(feature1Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gpt_feedback.feature_1_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gpt_feedback.feature_1_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: { display: true, text: 'Feedback Distribution for {{ feature_1 }}' }
+                }
+            });
+        
+            // Setup for feature 2 feedback chart
+            var feature2Ctx = document.getElementById('GPTfeature2Chart').getContext('2d');
+            var feature2Chart = new Chart(feature2Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gpt_feedback.feature_2_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gpt_feedback.feature_2_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: { display: true, text: 'Feedback Distribution for {{ feature_2 }}' }
+                }
+            });
+        
+            // Setup for real world feature 1 chart
+            var realWorldFeature1Ctx = document.getElementById('realWorldFeature1Chart').getContext('2d');
+            var realWorldFeature1Chart = new Chart(realWorldFeature1Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gpt_feedback.real_world_feature_1_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gpt_feedback.real_world_feature_1_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Real World Proportions for {{ feature_1 }}'
+                    }
+                }
+            });
+        
+            // Setup for real world feature 2 chart
+            var realWorldFeature2Ctx = document.getElementById('realWorldFeature2Chart').getContext('2d');
+            var realWorldFeature2Chart = new Chart(realWorldFeature2Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gpt_feedback.real_world_feature_2_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gpt_feedback.real_world_feature_2_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'], 
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Real World Proportions for {{ feature_2 }}'
+                    }
+                }
+            });
+        </script>
+        
+        
+        <!-- Gemini Feedback -->
+        {% if gemini_feedback.feedback %}
+        <div class="gemini-feedback">
+            <h2>Gemini Generated Values:</h2>
+            {% for key, values in gemini_feedback.feedback.items %}
+            <h3>{{ key|capfirst }}</h3>
+            {% for sub_key, count in values.items %}
+            <p>{{count}} occurrence(s) of {{ sub_key }}</p>
+            {% endfor %}
+            {% endfor %}
+        </div>
+        
+        <div class="gemini-real-world">
+            <h2>Gemini Real World Proportion:</h2>
+            {% if gemini_feedback.real_world_proportions %}
+            {% for key, values in gemini_feedback.real_world_proportions.items %}
+            <h3>{{ key|capfirst }}</h3>
+            {% for sub_key, proportion in values.items %}
+            <p>Gemini Found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{input_text}}</p>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        
+        <div class="gemini-uniform">
+            <h2>All Outputs Gemini Thought of (Uniform):</h2>
+            {% if gemini_feedback.uniform %}
+            {% for key, items in gemini_feedback.uniform.items %}
+            <h3>{{ key|capfirst }}</h3>
+            <ul>
+                {% for item in items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="chart-container">
+            <div class="feature1-charts">
+                <h3>Gemini's Output for {{ feature_1 }}</h3>
+                <canvas id="Geminifeature1Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="feature2-charts">
+                <h3>Gemini's Output for {{ feature_2 }}</h3>
+                <canvas id="Geminifeature2Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="real-world-feature1-charts">
+                <h3>Gemini's Real World Proportions for {{ feature_1 }}</h3>
+                <canvas id="GeminirealWorldFeature1Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="real-world-feature2-charts">
+                <h3>Gemini's Real World Proportions for {{ feature_2 }}</h3>
+                <canvas id="GeminirealWorldFeature2Chart" width="8px" height="8px"></canvas>
+            </div>
+        </div>
+
+
+        <script>
+            // Setup for feature 1 feedback chart
+            var feature1Ctx = document.getElementById('Geminifeature1Chart').getContext('2d');
+            var feature1Chart = new Chart(feature1Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gemini_feedback.feature_1_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gemini_feedback.feature_1_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: { display: true, text: 'Feedback Distribution for {{ feature_1 }}' }
+                }
+            });
+        
+            // Setup for feature 2 feedback chart
+            var feature2Ctx = document.getElementById('Geminifeature2Chart').getContext('2d');
+            var feature2Chart = new Chart(feature2Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gemini_feedback.feature_2_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gemini_feedback.feature_2_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: { display: true, text: 'Feedback Distribution for {{ feature_2 }}' }
+                }
+            });
+        
+            // Setup for real world feature 1 chart
+            var realWorldFeature1Ctx = document.getElementById('GeminirealWorldFeature1Chart').getContext('2d');
+            var realWorldFeature1Chart = new Chart(realWorldFeature1Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gemini_feedback.real_world_feature_1_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gemini_feedback.real_world_feature_1_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Real World Proportions for {{ feature_1 }}'
+                    }
+                }
+            });
+        
+            // Setup for real world feature 2 chart
+            var realWorldFeature2Ctx = document.getElementById('GeminirealWorldFeature2Chart').getContext('2d');
+            var realWorldFeature2Chart = new Chart(realWorldFeature2Ctx, {
+                type: 'pie',
+                data: {
+                    labels: JSON.parse('{{ gemini_feedback.real_world_feature_2_labels|safe }}'),
+                    datasets: [{
+                        data: JSON.parse('{{ gemini_feedback.real_world_feature_2_data|safe }}'),
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                        borderColor: ['rgba(255, 255, 255, 0.9)'], 
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Real World Proportions for {{ feature_2 }}'
+                    }
+                }
+            });
+        </script>
+        {% endif %}
+        
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

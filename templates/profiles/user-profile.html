@@ -16,6 +16,7 @@
     <div class="square">
         <img src="{{ MEDIA_URL }}{{ profile.profile_picture }}" alt="Profile Picture">
     </div>
+
     {% endif %}
     
     <form method="post" enctype="multipart/form-data">
@@ -33,6 +34,7 @@
                 <h2 class="feedback-entry-1">Input Text:</h2>
                 <p>Give me a {{ feedback.input_text }} and describe them using {{ feedback.feature_1 }} and {{ feedback.feature_2 }}</p>
                 
+                
                 {% if feedback.feedback %}
                 <h2 class="header">Generated Values:</h2>
                 {% for key, values in feedback.feedback.items %}
@@ -48,13 +50,13 @@
                 {% for key, values in feedback.real_world_proportions.items %}
                     <h3>{{ key|capfirst }}</h3>
                     {% for sub_key, proportion in values.items %}
-                        <p>Gemini Found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{ feedback.input_text }}</p>
+                        <p>{{feedback.model_name}} found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{ feedback.input_text }}</p>
                     {% endfor %}
                 {% endfor %}
                 {% endif %}
                 
                 {% if feedback.uniform %}
-                <h2>All Outputs Gemini Thought of:</h2>
+                <h2>All Outputs {{feedback.model_name}} Thought of:</h2>
                 {% for key, items in feedback.uniform.items %}
                     <h3>{{ key|capfirst }}</h3>
                     <ul>
@@ -98,7 +100,7 @@
         {% endfor %}
     </div>  
     {% else %}
-        <p>No feedback results available.</p>
+        <p class = "header-1">No feedback results available.</p>
     {% endif %}
 
 </div>
@@ -108,9 +110,6 @@
 <script>
   // JavaScript code for chart initialization
       {% for feedback in feedback_results %}
-          // Configuration for feature 1 feedback chart
-          console.log(feature1Ctx_{{ feedback.unique_id }});
-          console.log("feature1Chart_{{feedback.unique_id}}");
 
           var feature1Ctx_{{ feedback.unique_id }} = document.getElementById('feature1Chart_{{feedback.unique_id}}').getContext('2d');
           var feature1Chart_{{ feedback.unique_id }} = new Chart(feature1Ctx_{{ feedback.unique_id }}, {
@@ -119,8 +118,8 @@
                   labels: JSON.parse('{{ feedback.feature_1_labels|safe }}'),
                   datasets: [{
                       data: JSON.parse('{{ feedback.feature_1_data|safe }}'),
-                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)'], // Customize colors
-                      borderColor: ['rgba(255,99,132,1)', 'rgba(54, 162, 235, 1)'], // Customize border colors
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
                       borderWidth: 1
                   }]
               },
@@ -138,8 +137,8 @@
                   labels: {{ feedback.feature_2_labels|safe }},
                   datasets: [{
                       data: {{ feedback.feature_2_data|safe }},
-                      backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)'], // Customize colors
-                      borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'], // Customize border colors
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
                       borderWidth: 1
                   }]
               },
@@ -157,8 +156,8 @@
                   labels: {{ feedback.real_world_feature_1_labels|safe }},
                   datasets: [{
                       data: {{ feedback.real_world_feature_1_data|safe }},
-                      backgroundColor: ['rgba(255, 159, 64, 0.6)', 'rgba(192, 192, 192, 0.6)'], // Customize colors
-                      borderColor: ['rgba(255, 159, 64, 1)', 'rgba(192, 192, 192, 1)'], // Customize border colors
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
                       borderWidth: 1
                   }]
               },
@@ -177,8 +176,8 @@
                   labels: {{ feedback.real_world_feature_2_labels|safe }},
                   datasets: [{
                       data: {{ feedback.real_world_feature_2_data|safe }},
-                      backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(192, 192, 192, 0.6)'], // Customize colors
-                      borderColor: ['rgba(54, 162, 235, 1)', 'rgba(192, 192, 192, 1)'], // Customize border colors
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
                       borderWidth: 1
                   }]
               },
