@@ -28,10 +28,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l)-gigyn5@zz&gea=9t_cb(_=n$9lk)vydd355*zp_9z#td@!7'
 
 
-#API KEYS:
-os.environ.setdefault('GOOGLE_API_KEY', 'AIzaSyBGRo3GCYTXxBRpxoZJU-yDl3477gBMW6g')
-os.environ.setdefault('GPT_API_KEY', 'sk-proj-1hnyDTDL65b3UtaWbGmUT3BlbkFJNBEpOfrahvavl1dPugWw')
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
