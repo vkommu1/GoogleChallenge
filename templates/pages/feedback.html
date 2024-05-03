@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block head %}
+    <title>Model Generating Form</title>
+    <link rel="stylesheet" href="{% static 'feedback.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="feedback-form-container">
+    <div class="just-feedback">
+        <h1 class="form-text-head">Prompt Gemini</h1>
+        <form action="/api/feedback/" method="post" class="feedback-form">
+            {% csrf_token %}
+            <label for="user_input" class="form-text">Give me a:</label>
+            <input type="text" id="user_input" name="user_input" placeholder="subject">
+            <label for="feature_1" class="form-text">and describe them using:</label>
+            <input type="text" id="feature_1" name="feature_1" placeholder="first feature">
+            <input type="text" id="feature_2" name="feature_2" placeholder="second feature">
+            <input type="submit" class="save-button" value="Submit">
+        </form>
+    </div>
+
+    {% if input_text %}
+    <div class="results-container">
+        <div class = "text-results">
+        <h2 class = "header">Input Text:</h2>
+        <p>Give me a {{ input_text }} and describe them using {{ feature_1 }} and {{ feature_2 }}</p>
+        
+        {% if feedback %}
+        <h2 class = "header">Generated Values:</h2>
+        {% for key, values in feedback.items %}
+        <h3>{{ key|capfirst }}</h3>
+        {% for sub_key, count in values.items %}
+        <p>{{count}} occurrence(s) of {{ sub_key }}</p>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+
+        {% if real_world_proportions %}
+        <h2>Real-World Proportions:</h2>
+        {% for key, values in real_world_proportions.items %}
+        <h3>{{ key|capfirst }}</h3>
+        {% for sub_key, proportion in values.items %}
+        <p>Gemini Found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{input_text}}</p>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+
+        {% if uniform %}
+        <h2>All Outputs Gemini Thought of:</h2>
+        {% for key, items in uniform.items %}
+        <h3>{{ key|capfirst }}</h3>
+        <ul>
+            {% for item in items %}
+            <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+        {% endif %}
+        </div>
+
+
+
+        <div class="chart-container">
+            <div class="feature1-charts">
+                <h3>Gemini's Output for {{ feature_1 }}</h3>
+                <canvas id="feature1Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="feature2-charts">
+                <h3>Gemini's Output for {{ feature_2 }}</h3>
+                <canvas id="feature2Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="real-world-feature1-charts">
+                <h3>Gemini's Real World Proportions for {{ feature_1 }}</h3>
+                <canvas id="realWorldFeature1Chart" width="8px" height="8px"></canvas>
+            </div>
+            <div class="real-world-feature2-charts">
+                <h3>Gemini's Real World Proportions for {{ feature_2 }}</h3>
+                <canvas id="realWorldFeature2Chart" width="8px" height="8px"></canvas>
+            </div>
+        </div>
+        
+
+        <script>
+                var feature1Ctx = document.getElementById('feature1Chart').getContext('2d');
+                var feature1Chart = new Chart(feature1Ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: JSON.parse('{{ feature_1_labels|safe }}'),
+                        datasets: [{
+                            data: JSON.parse('{{ feature_1_data|safe }}'),
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        title: { display: true, text: 'Feedback Distribution for {{ feature_1 }}' }
+                    }
+                });
+            
+                var feature2Ctx = document.getElementById('feature2Chart').getContext('2d');
+                var feature2Chart = new Chart(feature2Ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: JSON.parse('{{ feature_2_labels|safe }}'),
+                        datasets: [{
+                            data: JSON.parse('{{ feature_2_data|safe }}'),
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        title: { display: true, text: 'Feedback Distribution for {{ feature_2 }}' }
+                    }
+                });
+            
+                var realWorldFeature1Ctx = document.getElementById('realWorldFeature1Chart').getContext('2d');
+                var realWorldFeature1Chart = new Chart(realWorldFeature1Ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: JSON.parse('{{ real_world_feature_1_labels|safe }}'),
+                        datasets: [{
+                            data: JSON.parse('{{ real_world_feature_1_data|safe }}'),
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Real World Proportions for {{ feature_1 }}'
+                        }
+                    }
+                });
+            
+                var realWorldFeature2Ctx = document.getElementById('realWorldFeature2Chart').getContext('2d');
+                var realWorldFeature2Chart = new Chart(realWorldFeature2Ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: JSON.parse('{{ real_world_feature_2_labels|safe }}'),
+                        datasets: [{
+                            data: JSON.parse('{{ real_world_feature_2_data|safe }}'),
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                            borderColor: ['rgba(255, 255, 255, 0.9)'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Real World Proportions for {{ feature_2 }}'
+                        }
+                    }
+                });
+            </script>
+            
+        </div>
+
+        
+
+        <form method="post"  enctype="multipart/form-data" action="{% url 'api_interaction:save_feedback' %}">
+            {% csrf_token %}
+            <input type="hidden" name="input_text" value="{{ input_text|safe }}">
+            <input type="hidden" name="feature_1" value="{{ feature_1|safe }}">
+            <input type="hidden" name="feature_2" value="{{ feature_2|safe }}">
+            <input type="hidden" name="feedback" value="{{ feedback|safe }}">
+            <input type="hidden" name="uniform" value="{{ uniform|safe }}">
+            <input type="hidden" name="model_name" value="{{ model_name|safe }}">
+            <input type="hidden" name="real_world_proportions" value="{{ real_world_proportions|safe }}">
+            <input type="hidden" name="feature_1_labels" value="{{ feature_1_labels|safe }}">
+            <input type="hidden" name="feature_1_data" value="{{ feature_1_data|safe }}">
+            <input type="hidden" name="feature_2_labels" value="{{ feature_2_labels|safe }}">
+            <input type="hidden" name="feature_2_data" value="{{ feature_2_data|safe }}">
+            <input type="hidden" name="real_world_feature_1_labels" value="{{ real_world_feature_1_labels|safe }}">
+            <input type="hidden" name="real_world_feature_1_data" value="{{ real_world_feature_1_data|safe }}">
+            <input type="hidden" name="real_world_feature_2_labels" value="{{ real_world_feature_2_labels|safe }}">
+            <input type="hidden" name="real_world_feature_2_data" value="{{ real_world_feature_2_data|safe }}">
+            <button type="submit" class="save-button">Save Results</button>
+        </form>    
+
+    {% endif %}
+</div>
+{% endblock %}

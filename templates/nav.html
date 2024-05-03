@@ -1,24 +1,20 @@
 <nav>
     <span class="menu-items">
-        <a href="{% url 'books:home_page' %}">
+        <a href="{% url 'api_interaction:home_page' %}">
             <button type="home" class="nav-button">Home</button>
         </a>
-        <a href="{% url 'books:list_books' %}">
-            <button type="books" class="nav-button">Directory</button>
-        </a>
-        <a href="{% url 'books:top_ten' %}">
-            <button type="rating" class="nav-button">Top-Rated</button>
-        </a>
-    </span>
 
-    <span class="search-bar">
-        <form id="search-bar"  method="GET" action="{% url 'books:search_books' %}">
-            <select name="field" id="field">
-                <option value="title" {% if field == 'title'%} selected {% endif %}>Title</option>
-                <option value="author" {% if field == 'author'%} selected {% endif %}>Author</option>
-              </select>
-            <input type="text" name="query" id="search-input" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
-        </form>
+        <a href="{% url 'api_interaction:about_me' %}">
+            <button type="feedback" class="nav-button">About</button>
+        </a>
+
+        <a href="{% url 'api_interaction:generate_feedback' %}">
+            <button type="feedback" class="nav-button">Model Test</button>
+        </a>
+
+        <a href="{% url 'api_interaction:compare_results' %}">
+            <button type="feedback" class="nav-button">Compare Models</button>
+        </a>
     </span>
     
     <span class="login-status">

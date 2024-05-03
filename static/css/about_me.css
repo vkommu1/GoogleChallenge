@@ -1,0 +1,55 @@
+
+.site-container {
+    display: flex;
+}
+
+.about-me-image img{
+    width: 300px;
+    height: 300px;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    text-align: center;
+}
+
+.about-me-container {
+    width: 90%;
+    max-width: 400px;
+    margin-left: 20px; /* Center the container horizontally */
+    margin-top: 50px;
+    padding: 20px; /* Add padding for spacing */
+    border-radius: 10px;
+    background-color: #cec9cb; /* Optional: add a background color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add a box shadow */
+    display: f;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    font-family: "Poppins";
+}
+
+.about-me-links{
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.about-me-links a{
+    display: inline-block;
+    margin-right: 35px;
+}
+
+.about-me-links img {
+    width: 40px;
+    height: 40px;
+}
+
+.message-statement-container {
+    padding: 20px;
+    flex: 1;
+    border-radius: 10px;
+    background-color: #cec9cb;
+    margin-left: 20px;
+    margin-top: 50px;
+    margin-right: 20px;
+}

@@ -1,0 +1,84 @@
+.form-text-head{
+    -webkit-text-stroke: 2px #53473e;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-size: 40px;
+  color: #cec9cb;
+  text-align: center;
+}
+
+
+
+.results-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-family: "Poppins", sans-serif;
+}
+
+.text-results{
+    font-family: "Poppins", sans-serif;
+    margin-right: 25px;
+}
+
+
+
+
+.feedback-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Space between the two boxes */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background: #e4e4e7;
+    border-radius: 8px;
+}
+
+.just-feedback{
+    margin-top: 40px;
+    width: 100%;
+}
+
+.feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between form elements */
+}
+
+.feedback-form label, .feedback-form input, .feedback-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+input[type="text"], textarea {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="submit"], button, .save-button{  /* This ensures all button elements and submit inputs are styled */
+    background-color: #53473e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;  
+    display: block; 
+    width: 100%;  
+    margin-top: 10px;  
+}
+
+input[type="submit"]:hover, button:hover, .save-button {
+    background-color: #908074;
+}
+
+
+.results {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #eef;
+    border-left: 6px solid #333;
+}

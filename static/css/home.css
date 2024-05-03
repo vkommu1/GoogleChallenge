@@ -1,49 +1,48 @@
-.search-bar {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-.home-title {
-    position: fixed;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    
-    text-align:center;
-    -webkit-text-stroke: 2px #426053;
-
-    font-family: 'Poppins';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 50px;
-    line-height: 75px;
-
-    color: #e1ebe7;
-    font-size: 60px;
-    font-family:"Poppins", sans-serif;
-    font-weight: 800;
-    
+.whole-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
 }
 
 .title-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 250px;
-    height: 200px;
-    margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 250px;
+  height: 200px;
+  margin: auto;
 }
 
-.title-logo img{
-  display: block;
-  margin-top: 20em;
+.title-logo img {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
+  border-radius: 50%;
+  margin-top: 1em; /* Adjust if needed */
 }
 
+.home-title {
+  -webkit-text-stroke: 6px #53473e;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-size: 60px;
+  color: #cec9cb;
+  margin-bottom: 1em; /* Adjust if more space is needed between title and image */
+}
 
+.slogan-container {
+  margin-top: 1em;
+}
 
+.slogan {
+  -webkit-text-stroke: 6px #53473e;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-size: 50px;
+  color: #cec9cb;
+}

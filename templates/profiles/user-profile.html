@@ -1,96 +1,192 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block head %}
     <title>Your Profile</title>
+    <link rel="stylesheet" href="{% static 'user_profile.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
-  <div class="content-section">
-    <h2 class = "user-back">Welcome Back @{{profile_user.username}} !</h2>
-    <p class = "date-userhood">Joined {{profile_user.date_joined.date}}</p>
-    <p class = "profile-things">
-        {% if profile.profile_picture %}
-        <div class = "square">
-            <img src="{{ MEDIA_URL }}{{ profile.profile_picture }}" alt="Profile Picture">
-        </div>
-        {% endif %}
+<div class="content-section">
+    <h2 class="user-back">Welcome Back @{{ profile_user.username }}!</h2>
+    <p class="date-userhood">Joined {{ profile_user.date_joined.date }}</p>
+    {% if profile.profile_picture %}
+    <div class="square">
+        <img src="{{ MEDIA_URL }}{{ profile.profile_picture }}" alt="Profile Picture">
+    </div>
 
-      <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form }}
-          <a class = "add-pfp" href="{% url 'profiles:upload_profile_picture' profile_user.id %}">Add a Profile Picture </a>
-      </form>
-    </p>
-  </div>
-  <div></div>
-    <div class="grid-container">
-        <div class="left-s">
-          <div class="ff-cont">
-            <div class="lsection">
-              <h2 class="header-1">Following:</h2>
-              <div class="lsection-text">
-              {% for followed_user in profile.followed_users.all %}
-                <p><a class="user-title" href="{% url 'profiles:profile' followed_user.user_id %}">{{ followed_user.user.username }}</a></p>
-              {% empty %}
-                <p class="no-follower">None</p>
-              {% endfor %}
-              </div>
-            </div>
-            <div class="rsection">
-              <h2 class="header-1">Followers:</h2>
-              <div class="rsection-text">
-              {% for follower in profile.follower_users.all %}
-                <p><a class="user-title" href="{% url 'profiles:profile' follower.user_id %}">{{ follower.user.username }}</a></p>
-              {% empty %}
-                <p class="no-follower">None</p>
-              {% endfor %}
-              </div>
-            </div>
-          </div>
-          <h2 class="header-1">Your Favorite Reads</h2>
-          {% for book in profile.favorite_books.all %}
-          <p class="my-fav-book"><a class = "rand-title" href="{% url 'books:view_book' book.id %}">{{ book.title }}</a></p>
-          {% empty %}
-          <p class="my-fav-book">No favorite books.</p>
-          {% endfor %}
-          <h2 class="header-1">Followed Users Favorite Reads</h2>
-          {% for book in followed_fav_books %}
-            <p class="my-fav-book"><a class = "rand-title" href="{% url 'books:view_book' book.id %}">{{ book.title }}</a></p>
-          {% empty %}
-            <p class="my-fav-book" style="padding: 5px 10px;">No favorite books.</p>
-          {% endfor %}
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <a class="add-pfp" href="{% url 'profiles:upload_profile_picture' profile_user.id %}">Add a Profile Picture</a>
+    </form>
+    
+    <h2 class="header-1">Feedback Results</h2>
+    {% if feedback_results %}
+    <div class="results-container-1">
+        {% for feedback in feedback_results %}
+        <div class="feedback-item">
+            <div class="text-results">
+                <h2 class="feedback-entry-1">Input Text:</h2>
+                <p>Give me a {{ feedback.input_text }} and describe them using {{ feedback.feature_1 }} and {{ feedback.feature_2 }}</p>
+                
+                
+                {% if feedback.feedback %}
+                <h2 class="header">Generated Values:</h2>
+                {% for key, values in feedback.feedback.items %}
+                    <h3>{{ key|capfirst }}</h3>
+                    {% for sub_key, count in values.items %}
+                        <p>{{ count }} occurrence(s) of {{ sub_key }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% endif %}
+                
+                {% if feedback.real_world_proportions %}
+                <h2>Real-World Proportions:</h2>
+                {% for key, values in feedback.real_world_proportions.items %}
+                    <h3>{{ key|capfirst }}</h3>
+                    {% for sub_key, proportion in values.items %}
+                        <p>{{feedback.model_name}} found {{ sub_key }} worldwide makes up around {{ proportion }}% of all {{ feedback.input_text }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% endif %}
+                
+                {% if feedback.uniform %}
+                <h2>All Outputs {{feedback.model_name}} Thought of:</h2>
+                {% for key, items in feedback.uniform.items %}
+                    <h3>{{ key|capfirst }}</h3>
+                    <ul>
+                        {% for item in items %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+                {% endif %}
 
-        </div>
-        <div class="right-s">
-          <h2 class="header-2">Your Reviews</h2>
-          <div class="review-block">
-          {% for review in reviews %}
-          <div class="review-row">
-            <div class="review-books" style="padding-top: .5em">
-              <b class="rev-for">Review for: <a class="rand-title" href="{% url 'books:view_book' review.book.id %}">{{review.book.title}}</a></b>
-            </div>
-            <div class="review-contents">
-              <p class="rating-prof">Your Rating: {{review.rating}}/5</p>
-              <div class="Stars" style="--rating: {{review.rating}};" aria-label="Rating of this product is {{review.rating}} out of 5."></div>
-              <p class="rating-prof">Your Review:</p>
-              <p class="user-rev">{{review.text}}</p>
-              
-              <div>
-              {% if review.images %}
-              <img src="{{ MEDIA_URL }}{{ review.images }}" alt="Review Image" style="width: 40%; height: 100%;">
-              {% endif %}
+
+                
+                <div class="charts-containers">
+                  <div class="charts">
+                      <h3>Feedback Distribution for {{feedback.feature_1}}</h3>
+                      <canvas id="feature1Chart_{{ feedback.unique_id }}"></canvas>
+                  </div>
+                  <div class="charts">
+                    <h3>Real World Proportions for {{feedback.feature_1}}</h3>
+                    <canvas id="realWorldFeature1Chart_{{ feedback.unique_id }}" width="8px" height="8px"></canvas>
+                </div>
+                  <div class="charts">
+                      <h3>Feedback Distribution for {{feedback.feature_2}}</h3>
+                      <canvas id="feature2Chart_{{ feedback.unique_id }}" width="8px" height="8px"></canvas>
+                  </div>
+                  <div class="charts">
+                    <h3>Real World Proportions for {{feedback.feature_2}}</h3>
+                    <canvas id="realWorldFeature2Chart_{{ feedback.unique_id }}" width="8px" height="8px"></canvas>
+                  </div>
               </div>
-              <a href="{% url 'books:edit_review' review.book.id %}">
-                <button type="edit-rev" class="edit-rev">Edit Review</button>
-              </a>
-              <a href="{% url 'books:edit_review' review.book.id %}">
-                <button type="delete-rev" class="rev-button delete-button">Delete Review</button>
-              </a>
             </div>
-          </div>
-          {% endfor %}
-          </div>
+            {% if feedback.unique_id %}
+            <form action="{% url 'api_interaction:delete_feedback' feedback.unique_id %}" method="post">
+                {% csrf_token %}
+                <button type="submit"> Delete </button>
+            </form>
+            {% else %}
+                <p> Warning: no unique identifier found </p>
+            {% endif %}
         </div>
-      </div>
-  
+        {% endfor %}
+    </div>  
+    {% else %}
+        <p class = "header-1">No feedback results available.</p>
+    {% endif %}
+
+</div>
+
+
+
+<script>
+  // JavaScript code for chart initialization
+      {% for feedback in feedback_results %}
+
+          var feature1Ctx_{{ feedback.unique_id }} = document.getElementById('feature1Chart_{{feedback.unique_id}}').getContext('2d');
+          var feature1Chart_{{ feedback.unique_id }} = new Chart(feature1Ctx_{{ feedback.unique_id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: JSON.parse('{{ feedback.feature_1_labels|safe }}'),
+                  datasets: [{
+                      data: JSON.parse('{{ feedback.feature_1_data|safe }}'),
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  title: { display: true, text: 'Feedback Distribution for {{feedback.feature_1}}' } // Customize chart title
+              }
+          });
+
+          // Configuration for feature 2 feedback chart
+          var feature2Ctx_{{ feedback.unique_id }} = document.getElementById('feature2Chart_{{feedback.unique_id}}').getContext('2d');
+          var feature2Chart_{{ feedback.unique_id }} = new Chart(feature2Ctx_{{ feedback.unique_id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: {{ feedback.feature_2_labels|safe }},
+                  datasets: [{
+                      data: {{ feedback.feature_2_data|safe }},
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  title: { display: true, text: 'Feedback Distribution for Feature 2' } // Customize chart title
+              }
+          });
+
+          // Configuration for real world feature 1 chart
+          var realWorldFeature1Ctx_{{ feedback.unique_id }} = document.getElementById('realWorldFeature1Chart_{{feedback.unique_id}}').getContext('2d');
+          var realWorldFeature1Chart_{{ feedback.unique_id }} = new Chart(realWorldFeature1Ctx_{{ feedback.unique_id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: {{ feedback.real_world_feature_1_labels|safe }},
+                  datasets: [{
+                      data: {{ feedback.real_world_feature_1_data|safe }},
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  legend: { position: 'top' },
+                  title: { display: true, text: 'Real World Proportions for Feature 1' } // Customize chart title
+              }
+          });
+
+          // Configuration for real world feature 2 chart
+          var realWorldFeature2Ctx_{{ feedback.unique_id }} = document.getElementById('realWorldFeature2Chart_{{feedback.unique_id}}').getContext('2d');
+          var realWorldFeature2Chart_{{ feedback.unique_id }} = new Chart(realWorldFeature2Ctx_{{ feedback.unique_id }}, {
+              type: 'pie', // Change the chart type as needed
+              data: {
+                  labels: {{ feedback.real_world_feature_2_labels|safe }},
+                  datasets: [{
+                      data: {{ feedback.real_world_feature_2_data|safe }},
+                      backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'], // Customize colors
+                      borderColor: ['rgba(255,255,255,0.9)'], // Customize border colors
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  legend: { position: 'top' },
+                  title: { display: true, text: 'Real World Proportions for Feature 2' } // Customize chart title
+              }
+          });
+      {% endfor %}
+</script>
 {% endblock %}

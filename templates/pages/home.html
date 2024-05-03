@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block head %}
+    <title>Home</title>
+{% endblock %}
+
+{% block content %}
+
+<body class = "whole-container">
+    <div class="title-logo">
+        <h1 class="home-title">BAIS</h1>
+        <img src="/media/logo/favicon.png" alt="Logo">
+    </div>
+    <div class ="slogan-container">
+        <h2 class="slogan"> Aiming to Identify Bias in Popular AI </h2>
+    </div>
+</body>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 .log-in{
     text-align:center;
-    -webkit-text-stroke: 2px #426053;
+    -webkit-text-stroke: 2px #999699;
 
     font-family: 'Poppins';
     font-style: normal;
@@ -8,7 +8,7 @@
     font-size: 40px;
     line-height: 75px;
 
-    color: #afe0c8;
+    color: #dfdce4;
     font-size: 40px;
     font-family:"Poppins", sans-serif;
     font-weight: 800;
