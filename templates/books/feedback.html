@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+</head>
+<body>
+    <h1>Feedback Form</h1>
+    <form action="/api/feedback/" method="post" enctype=>
+        {% csrf_token %}
+        <label for="input_text">Enter your text:</label><br>
+        <textarea id="input_text" name="input_text" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if input_text %}
+        <h2>Input Text:</h2>
+        <p>{{ input_text }}</p>
+
+        {% if feedback %}
+            <h2>Generated Feedback:</h2>
+            <p>{{ feedback }}</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
