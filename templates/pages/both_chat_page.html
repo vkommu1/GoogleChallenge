@@ -4,7 +4,7 @@
 
 {% block head %}
     <title>Model Generating Form</title>
-    <link rel="stylesheet" href="{% static 'chat_page.css' %}">
+    <link rel="stylesheet" href="{% static 'both_chat.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
@@ -12,7 +12,7 @@
 <div class="feedback-form-container">
     <div class="just-feedback">
         <h1 class="form-text-head">Compare GPT and Gemini</h1>
-        <form action="/api/compare/" method="post" class="feedback-form">
+        <form action="/api/compare/" method="post" class="feedback-form" id="compareForm">
             {% csrf_token %}
             <label for="user_input" class="form-text">Give me a:</label>
             <input type="text" id="user_input" name="user_input" placeholder="subject">
@@ -22,15 +22,41 @@
             <input type="submit" class="save-button" value="Submit">
         </form>
     </div>
+</div>
 
-    <h1 class = "h1-header"> Comparison Results </h1>
+    
+
+    <script>
+        $(document).ready(function() {
+            $('#compareForm').submit(function(event) {
+                event.preventDefault();
+                $('#loadingIcon').show();  // Show the loading icon
+                $.ajax({
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#loadingIcon').hide();  // Hide the loading icon on success
+                        $('#resultsContainer').html(response).show();  // Assume response is HTML to insert and show
+                    },
+                    error: function() {
+                        $('#loadingIcon').hide();  // Hide the loading icon on error
+                        alert("Failed to load data. Please try again.");  // More user-friendly error handling
+                    }
+                });
+            });
+        });
+    </script>
+
+<div class = "whole">
     {% if input_text %}
+    <h1 class = "form-text-head"> Comparison Results </h1>
     <div class="results-container">
-        <h2 class="prompt">Prompt: {{ input_text }} described using {{ feature_1 }} and {{ feature_2 }}</h2>
+        <div class="text-results">
+        <h2 class="prompt">Prompt: </h2>
+        <p>{{ input_text }} described using {{ feature_1 }} and {{ feature_2 }}</p>
         
-        <!-- GPT Feedback -->
         {% if gpt_feedback.feedback %}
-        <div class="gpt-feedback">
             <h2>GPT Generated Values:</h2>
             {% for key, values in gpt_feedback.feedback.items %}
             <h3>{{ key|capfirst }}</h3>
@@ -38,9 +64,7 @@
             <p>{{count}} occurrence(s) of {{ sub_key }}</p>
             {% endfor %}
             {% endfor %}
-        </div>
         
-        <div class="gpt-real-world">
             <h2>GPT Real World Proportion:</h2>
             {% if gpt_feedback.real_world_proportions %}
             {% for key, values in gpt_feedback.real_world_proportions.items %}
@@ -50,9 +74,7 @@
             {% endfor %}
             {% endfor %}
             {% endif %}
-        </div>
         
-        <div class="gpt-uniform">
             <h2>All Outputs GPT Thought of:</h2>
             {% if gpt_feedback.uniform %}
             {% for key, items in gpt_feedback.uniform.items %}
@@ -64,8 +86,8 @@
             </ul>
             {% endfor %}
             {% endif %}
-        </div>
         {% endif %}
+        </div>
 
 
         <div class="chart-container">
@@ -86,6 +108,8 @@
                 <canvas id="GPTrealWorldFeature2Chart" width="8px" height="8px"></canvas>
             </div>
         </div>
+    </div>
+</div>
 
 
         <script>
@@ -128,7 +152,7 @@
             });
         
             // Setup for real world feature 1 chart
-            var realWorldFeature1Ctx = document.getElementById('realWorldFeature1Chart').getContext('2d');
+            var realWorldFeature1Ctx = document.getElementById('GPTrealWorldFeature1Chart').getContext('2d');
             var realWorldFeature1Chart = new Chart(realWorldFeature1Ctx, {
                 type: 'pie',
                 data: {
@@ -153,7 +177,7 @@
             });
         
             // Setup for real world feature 2 chart
-            var realWorldFeature2Ctx = document.getElementById('realWorldFeature2Chart').getContext('2d');
+            var realWorldFeature2Ctx = document.getElementById('GPTrealWorldFeature2Chart').getContext('2d');
             var realWorldFeature2Chart = new Chart(realWorldFeature2Ctx, {
                 type: 'pie',
                 data: {
@@ -177,22 +201,41 @@
                 }
             });
         </script>
-        
-        
-        <!-- Gemini Feedback -->
+    </div>
+
+
+        <form method="post"  enctype="multipart/form-data" action="{% url 'api_interaction:save_both' %}">
+            {% csrf_token %}
+            <input type="hidden" name="input_text" value="{{ input_text|safe }}">
+            <input type="hidden" name="model_name" value="{{ gpt_feedback.model_name|safe }}">
+            <input type="hidden" name="feature_1" value="{{ feature_1|safe }}">
+            <input type="hidden" name="feature_2" value="{{ feature_2|safe }}">
+            <input type="hidden" name="feedback" value="{{ gpt_feedback.feedback|safe }}">
+            <input type="hidden" name="uniform" value="{{gpt_feedback.uniform}}">
+            <input type="hidden" name="real_world_proportions" value="{{ gpt_feedback.real_world_proportions|safe }}">
+            <input type="hidden" name="feature_1_labels" value="{{ gpt_feedback.feature_1_labels|safe }}">
+            <input type="hidden" name="feature_1_data" value="{{ gpt_feedback.feature_1_data|safe }}">
+            <input type="hidden" name="feature_2_labels" value="{{ gpt_feedback.feature_2_labels|safe }}">
+            <input type="hidden" name="feature_2_data" value="{{ gpt_feedback.feature_2_data|safe }}">
+            <input type="hidden" name="real_world_feature_1_labels" value="{{ gpt_feedbackreal_world_feature_1_labels|safe }}">
+            <input type="hidden" name="real_world_feature_1_data" value="{{ gpt_feedback.real_world_feature_1_data|safe }}">
+            <input type="hidden" name="real_world_feature_2_labels" value="{{ gpt_feedback.real_world_feature_2_labels|safe }}">
+            <input type="hidden" name="real_world_feature_2_data" value="{{ gpt_feedback.real_world_feature_2_data|safe }}">
+            <button type="submit" class="save-button">Save Results</button>
+        </form> 
+<div class = "whole"> 
+    <div class="results-container">
+        <div class="text-results">
         {% if gemini_feedback.feedback %}
-        <div class="gemini-feedback">
-            <h2>Gemini Generated Values:</h2>
+            <h2 class = "header">Gemini Generated Values:</h2>
             {% for key, values in gemini_feedback.feedback.items %}
             <h3>{{ key|capfirst }}</h3>
             {% for sub_key, count in values.items %}
             <p>{{count}} occurrence(s) of {{ sub_key }}</p>
             {% endfor %}
             {% endfor %}
-        </div>
         
-        <div class="gemini-real-world">
-            <h2>Gemini Real World Proportion:</h2>
+            <h2 class = "header">Gemini Real World Proportion:</h2>
             {% if gemini_feedback.real_world_proportions %}
             {% for key, values in gemini_feedback.real_world_proportions.items %}
             <h3>{{ key|capfirst }}</h3>
@@ -201,10 +244,8 @@
             {% endfor %}
             {% endfor %}
             {% endif %}
-        </div>
         
-        <div class="gemini-uniform">
-            <h2>All Outputs Gemini Thought of (Uniform):</h2>
+            <h2 class = "header">All Outputs Gemini Thought of (Uniform):</h2>
             {% if gemini_feedback.uniform %}
             {% for key, items in gemini_feedback.uniform.items %}
             <h3>{{ key|capfirst }}</h3>
@@ -219,7 +260,7 @@
 
         <div class="chart-container">
             <div class="feature1-charts">
-                <h3>Gemini's Output for {{ feature_1 }}</h3>
+                <h3 >Gemini's Output for {{ feature_1 }}</h3>
                 <canvas id="Geminifeature1Chart" width="8px" height="8px"></canvas>
             </div>
             <div class="feature2-charts">
@@ -235,6 +276,7 @@
                 <canvas id="GeminirealWorldFeature2Chart" width="8px" height="8px"></canvas>
             </div>
         </div>
+    </div>
 
 
         <script>
@@ -326,9 +368,27 @@
                 }
             });
         </script>
+
+        <form method="post"  enctype="multipart/form-data" action="{% url 'api_interaction:save_both' %}">
+            {% csrf_token %}
+            <input type="hidden" name="input_text" value="{{ input_text|safe }}">
+            <input type="hidden" name="feature_1" value="{{ feature_1|safe }}">
+            <input type="hidden" name="feature_2" value="{{ feature_2|safe }}">
+            <input type="hidden" name="feedback" value="{{ gemini_feedback.feedback|safe }}">
+            <input type="hidden" name="uniform" value="{{ gemini_feedback.uniform|safe }}">
+            <input type="hidden" name="model_name" value="{{ gemini_feedback.model_name|safe }}">
+            <input type="hidden" name="real_world_proportions" value="{{ gemini_feedback.real_world_proportions|safe }}">
+            <input type="hidden" name="feature_1_labels" value="{{ gemini_feedback.feature_1_labels|safe }}">
+            <input type="hidden" name="feature_1_data" value="{{ gemini_feedback.feature_1_data|safe }}">
+            <input type="hidden" name="feature_2_labels" value="{{ gemini_feedback.feature_2_labels|safe }}">
+            <input type="hidden" name="feature_2_data" value="{{ gemini_feedback.feature_2_data|safe }}">
+            <input type="hidden" name="real_world_feature_1_labels" value="{{ gemini_feedback.real_world_feature_1_labels|safe }}">
+            <input type="hidden" name="real_world_feature_1_data" value="{{ gemini_feedback.real_world_feature_1_data|safe }}">
+            <input type="hidden" name="real_world_feature_2_labels" value="{{ gemini_feedback.real_world_feature_2_labels|safe }}">
+            <input type="hidden" name="real_world_feature_2_data" value="{{ gemini_feedback.real_world_feature_2_data|safe }}">
+            <button type="submit" class="save-button">Save Results</button>
+        </form>    
         {% endif %}
-        
-    </div>
     {% endif %}
-</div>
 {% endblock %}
+</div>

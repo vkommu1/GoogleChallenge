@@ -4,14 +4,15 @@
             <button type="home" class="nav-button">Home</button>
         </a>
 
-        <a href="{% url 'api_interaction:generate_feedback' %}">
-            <button type="feedback" class="nav-button">Model Test</button>
-        </a>
         <a href="{% url 'api_interaction:about_me' %}">
             <button type="feedback" class="nav-button">About</button>
         </a>
 
-        <a href="{% url 'api_interaction:gpt_generate_feedback' %}">
+        <a href="{% url 'api_interaction:generate_feedback' %}">
+            <button type="feedback" class="nav-button">Model Test</button>
+        </a>
+
+        <a href="{% url 'api_interaction:compare_results' %}">
             <button type="feedback" class="nav-button">Compare Models</button>
         </a>
     </span>
