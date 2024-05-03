@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block head %}
+    <title>Viewing {{profile_user.username}}'s Profile</title>
+{% endblock %}
+
+{% block content %}
+    <div class="content-section">
+    <h2 class = "user-back">{{profile_user.username}}'s Page</h2>
+    <p class = "date-userhood">Joined {{profile_user.date_joined.date}}</p>
+    {% if profile.profile_picture %}
+    <div class = "square">
+        <img src="{{ MEDIA_URL }}{{ profile.profile_picture }}" alt="Profile Picture">
+    </div>
+        {% endif %}
+    {% if request.user.is_authenticated and profile_user.username != request.user.username%}
+        {% if profile in signed_in_user.followed_users.all %}
+            <form id="unfollow" action="{% url 'profiles:follow_user' profile_user.id %}" method="POST">
+                {% csrf_token %}
+                <button class="follow-button"> Unfollow </button>
+            </form>
+        {% else %}
+            <form id="follow" action="{% url 'profiles:follow_user' profile_user.id %}" method="POST">
+                {% csrf_token %}
+                <button class="follow-button">Follow</button>
+            </form>
+        {% endif %}
+    {% endif %}
+    </div>
+    
+    <div class="grid-container">
+        <div class="left-s">
+        <h2 class="header-1">{{profile_user.username}}'s Favorite Reads:</h2>
+            {% for book in profile.favorite_books.all %}
+                <p class="my-fav-book"><a class = "rand-title" href="{% url 'books:view_book' book.id %}">{{ book.title }}</a></p>
+            {% empty %}
+                <p class="my-fav-book" style="padding: 5px 10px;">No favorite books.</p>
+            {% endfor %}
+        </div>
+        <div class="right-s">
+        <h2 class="header-2">{{profile_user.username}}'s Reviews:</h2>
+            <div class="review-block">
+            {% for review in reviews %}
+                <div class="review-row">
+                    <div class="review-books" style="padding-top: .5em">
+                        <b class="rev-for">Review for: 
+                            <a class="rand-title" href="{% url 'books:view_book' review.book.id %}">{{review.book.title}}</a>
+                        </b>
+                    </div>
+                    <div class="review-contents">
+                        <p class="rating-prof">Rating: {{review.rating}}</p>
+                        <div class="Stars" style="--rating: {{review.rating}};" aria-label="Rating of this product is {{review.rating}} out of 5."></div>
+                        <p class="rating-prof">Review:</p>
+                        <p class="user-rev">{{review.text}}</p>
+                        {% if review.images %}
+                        <img src="{{ MEDIA_URL }}{{ review.images }}" alt="Review Image" style="width: 40%; height: 100%;">
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

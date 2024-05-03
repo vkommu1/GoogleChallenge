@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/search_results.css' %}">
+{% endblock %}
+
+{% block head %}
+    <title>Search ISBN</title>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h2>Search by ISBN</h2>
+        <p>Enter the ISBN of the book you're looking for, and we'll see if we can find it.</p>
+        <div class="isbn-search search-bar" style="margin-left: 15px;">
+            <form id="isbn-search" class="isbn-form" method="GET" action="{% url 'books:search_isbn' %}">
+                <input type="text" name="isbn" id="isbn-input" placeholder="Enter ISBN10 here"
+                    {% if query_isbn %} value="{{query_isbn}}" {% endif %} />
+            </form>
+        </div>
+
+        <div class="isbn-result-container">
+            {% if book %}
+                <h3>Result:</h3>
+                <div class="isbn-result">
+                    {% include "books/book_result.html" with book=book %}
+                </div>
+            {% elif query_isbn %}
+                <br/><br/>
+                <div class="no-results">No results found.</div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            var pjax = new Pjax({
+                elements: ["form.isbn-form"],
+                selectors: [".isbn-form", ".isbn-result-container", ".empty-div"],
+                switches: {
+                    ".isbn-form": Pjax.switches.outerHTML,
+                    ".isbn-result-container": Pjax.switches.outerHTML,
+                    ".empty-div": function(oldEl, newEl, options) {
+                        oldEl.outerHTML = newEl.outerHTML
+                        {% if not book.id %}
+                            document.getElementById("book-result").href = "{% url 'books:create_from_isbn' %}" + "?isbn=";
+                            document.getElementById("book-result").href += document.getElementById("isbn-input").value
+                        {% endif %}
+                        pjax.refresh()
+                        this.onSwitch()
+                    },
+                }
+            })
+        });
+    </script>
+{% endblock %}

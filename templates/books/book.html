@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>{{book.title}}</title>
+{% endblock %}
+
+<!--h1,h2,h4 have already been used-->
+{% block content %}
+
+<div class="container">
+    <div class="left-section">
+        <div class = "container-fluid">
+            <div class = "book-info container-fluid">
+                <h4 class = "review-book">{{ book.title }}</h4>
+                <h5 class="book-author">By {{ book.author }}</h5>
+                <h5 class="book-published">Published: {{ book.pub_year }}</h5>  
+                {% if book.num_pages %}
+                    <div class="book-pagenum" style="font-style: italic;">{{book.num_pages}} pages</div>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                    {% if book in profile.favorite_books.all %}
+                        <div class="center">
+                        <form id="favorite" action="{% url 'books:favorite_book' book.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="fav-submit"> Unfavorite </button>
+                        </form>
+                        </div>
+                    {% else %}
+                        <div class="center">
+                        <form id="favorite" action="{% url 'books:favorite_book' book.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="fav-submit"> Favorite </button>
+                        </form>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% if book.isbn or book.olid %}
+            <div class = "center">
+                {% if book.olid %}
+                    <img src="https://covers.openlibrary.org/b/olid/{{book.olid}}-L.jpg" alt="Image of book" style="float:center;"  class="book-image">
+                {% elif book.isbn %}
+                    <img src="https://covers.openlibrary.org/b/isbn/{{book.isbn}}-L.jpg" alt="Image of book" style="float:center;"  class="book-image">
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="right-section">
+        <h3 class = "reviews">Reviews</h3>
+        {% if not user_review %}
+            <a class="write-rev-button" href="{% url 'books:review_book' book.id %}">Leave a Review</a>
+            {% if not reviews  %}
+            <p class = "no-rev">No reviews for this book :</p>
+            {% endif %}
+        {% else %}
+            <h5 class ="personal-review">Your Review:</h5>
+            <div class = "review-container">
+                <div style="margin-left: 30px;">
+                    <div class="review-heading">
+                        <a class="user-profile-button" href="{% url 'profiles:profile' user.id %}" >{{ user.username }}</a>
+                        <div class="Stars" style="--rating: {{user_review.rating}};" aria-label="Rating of this product is {{user_review.rating}} out of 5."></div>
+                        <b class = "rating">{{ user_review.rating }}/5</b>
+                        <span class="like-dislike-right-align">
+                            <form id="like_review" class="like-form" action="{% url 'books:like_dislike' book.id %}" method="POST" data-pjax>
+                                {% csrf_token %}
+                                <input type="hidden" name="review_id" value="{{ user_review.id }}">
+                                <input type="hidden" name="reaction" value="like">
+                                <button class="like-buttons" type="submit"> Likes: {{user_review.likes.count}}</button>
+                            </form>
+                            <form id="dislike_review" class="dislike-form" action="{% url 'books:like_dislike' book.id %}" method="POST" data-pjax>
+                                {% csrf_token %}
+                                <input type="hidden" name="review_id" value="{{ user_review.id }}">
+                                <input type="hidden" name="reaction" value="dislike">
+                                <button class="like-buttons" type="submit"> Dislikes: {{user_review.dislikes.count}}</button>
+                            </form>   
+                        </span>
+                    </div>
+                <h6 class = "user-rev">{{ user_review.text }}</h6>
+                </div>
+                <div style="margin-left: 30px;">
+                {% if user_review.images %}
+                <img src="{{ MEDIA_URL }}{{ user_review.images }}" alt="Review Image" style="width: 40%; height: 100%;">
+                {% endif %}
+                </div>
+
+                <a href="{% url 'books:edit_review' book.id %}">
+                    <button type="edit-rev" class="rev-button" style="margin-left: 30px;">Edit Review</button>
+                </a>
+                <a href="{% url 'books:delete_review' book.id %}">
+                    <button type="delete-rev" class="rev-button delete-button">Delete Review</button>
+                </a>
+            </div>
+            <br/>
+        {% endif %}
+        <div>
+            <form id="sort-form" method="GET" action="{% url 'books:view_book' book.id %}">
+                <label for="sort">Sort reviews by:</label>
+                <select id="sort" name="sort">
+                    <option value="" {% if sort_options == '' %}selected{% endif %}>No Filter</option>
+                    <option value="favorable" {% if sort_options == 'favorable' %}selected{% endif %}>Most Favorable</option>
+                    <option value="unfavorable" {% if sort_options == 'unfavorable' %}selected{% endif %}>Least Favorable</option>
+                    <option value="helpful" {% if sort_options == 'helpful' %}selected{% endif %}>Most Helpful</option>
+                    <option value="unhelpful" {% if sort_options == 'unhelpful' %}selected{% endif %}>Least Helpful</option>
+                </select>
+            </form>
+        </div>
+        <br/>
+        <div class="margin"><p></p></div>
+        {% for review in reviews %}
+        <div class = "review-container">
+            <div>
+                <div>
+                    <div class="review-heading">
+                        <a class="user-profile-button" href="{% url 'profiles:profile' review.user.id %}" margin-right = 20px >{{ review.user.username }}</a>
+                        <div class="Stars" style="--rating: {{review.rating}};" aria-label="Rating of this product is {{review.rating}} out of 5."></div>
+                        <b class = "rating">{{ review.rating }}/5</b>
+                        <span class="like-dislike-right-align">
+                            <form id="like_review" class="like-form" action="{% url 'books:like_dislike' book.id %}" method="POST" data-pjax>
+                                {% csrf_token %}
+                                <input type="hidden" name="review_id" value="{{ review.id }}">
+                                <input type="hidden" name="reaction" value="like">
+                                <button class="like-buttons" type="submit"> Likes: {{review.likes.count}}</button>
+                            </form>
+                            <form id="dislike_review" class="dislike-form" action="{% url 'books:like_dislike' book.id %}" method="POST" data-pjax>
+                                {% csrf_token %}
+                                <input type="hidden" name="review_id" value="{{ review.id }}">
+                                <input type="hidden" name="reaction" value="dislike">
+                                <button class="like-buttons" type="submit"> Dislikes: {{review.dislikes.count}}</button>
+                            </form>        
+                        </span>
+                    </div>
+                </div>
+                <h6 class = "user-rev">{{ review.text }}</h6>
+            </div>
+            <div>
+            {% if review.images %}
+            <img src="{{ MEDIA_URL }}{{ review.images }}" alt="Review Image" style="width: 40%; height: 100%;">
+            {% endif %}
+        </div>
+        {% endfor %}
+    <br/>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        var pjax = new Pjax({
+            elements: ["form.like-form", "form.dislike-form"],
+            selectors: [".like-form", ".dislike-form", ".empty-div"],
+            switches: {
+                ".like-form": Pjax.switches.outerHTML,
+                ".dislike-form": Pjax.switches.outerHTML,
+                ".empty-div": function(oldEl, newEl, options) {
+                    oldEl.outerHTML = newEl.outerHTML
+                    pjax.refresh()
+                    this.onSwitch()
+                },
+            }
+        })
+        
+        // Clears selected filters from previous pages
+        window.addEventListener('load', function() {
+            localStorage.removeItem('sort_options');
+        });
+        
+        var sortSelect = document.getElementById('sort');
+        var sortOptions = localStorage.getItem('sort_options');
+
+
+        if (sortOptions) {
+            sortSelect.value = sortOptions;
+        }
+
+        sortSelect.addEventListener('change', function() {
+            localStorage.setItem('sort_options', this.value);
+            document.getElementById('sort-form').submit();
+        });
+    });
+
+</script>
+{% endblock %}

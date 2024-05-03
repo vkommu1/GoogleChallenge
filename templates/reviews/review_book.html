@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>Reviewing {{book.title}}</title>
+{% endblock %}
+
+{% block content %}
+  <h1 class = "recent-read">tell us about your recent read</h1>
+  <h2 class = "fields-detail">please fill in the following fields with as much detail as possible</h2>
+  <h2 class = "fields-detail">thank you for helping out other great readers like yourself! happy reading :)</h2>
+
+  <h4 class = "review-book">Reviewing "{{book.title}}" ({{book.pub_year}})</h4>
+  <div class="review">
+    <form class = "rev-b" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+        <p>
+          {{ field.label_tag }}<br>
+          {{ field }}
+          {% if field.help_text %}
+            <small style="color: grey">{{ field.help_text }}</small>
+          {% endif %}
+          {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </p>
+      {% endfor %}
+      <button type="submit" class="sub-button">submit</button>
+    </form>
+  </div>
+{% endblock %}

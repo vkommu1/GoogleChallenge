@@ -1,0 +1,50 @@
+<nav>
+    <span class="menu-items">
+        <a href="{% url 'books:home_page' %}">
+            <button type="home" class="nav-button">Home</button>
+        </a>
+        <a href="{% url 'books:list_books' %}">
+            <button type="books" class="nav-button">Directory</button>
+        </a>
+        <a href="{% url 'books:top_ten' %}">
+            <button type="rating" class="nav-button">Top-Rated</button>
+        </a>
+    </span>
+
+    <span class="search-bar">
+        <form id="search-bar"  method="GET" action="{% url 'books:search_books' %}">
+            <select name="field" id="field">
+                <option value="title" {% if field == 'title'%} selected {% endif %}>Title</option>
+                <option value="author" {% if field == 'author'%} selected {% endif %}>Author</option>
+              </select>
+            <input type="text" name="query" id="search-input" placeholder="Search" {% if query %}value="{{query}}"{% endif %} />
+        </form>
+    </span>
+    
+    <span class="login-status">
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+            <button class="hamburger-menu-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="text">{{user.username}}</span>
+                <span class="hamburger">
+                    <div class="hamburger-icon"></div>
+                    <div class="hamburger-icon"></div>
+                    <div class="hamburger-icon"></div>
+                </span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="{% url 'profiles:user-profile' user.id %}">Profile</a>
+              <a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a>
+            </div>
+        </div>
+        
+        {% else %}
+        <a href="{% url 'users:signup' %}">
+            <button type="signup" class="nav-button">Sign Up</button></a>
+        <a href="{% url 'users:login'%}">
+            <button type="login" class="nav-button">Login</button>
+        </a>
+        {% endif %}
+    </span>
+
+</nav>
