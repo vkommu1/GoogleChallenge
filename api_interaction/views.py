@@ -29,7 +29,7 @@ def compare_results(request):
         feature_2 = request.POST.get('feature_2', '')
 
         # Send input to both GPT and Gemini endpoints
-        gpt_feedback = run_gpt_queries_and_store_results(2, user_input, feature_1, feature_2)
+        gpt_feedback = run_gpt_queries_and_store_results(5, user_input, feature_1, feature_2)
         gpt_real_world_proportions = get_gpt_real_world_proportions(user_input, feature_1, feature_2)
         gpt_uniform_prop = uniform_gpt_proportions(user_input, feature_1, feature_2)
 
@@ -97,7 +97,7 @@ def compare_results(request):
         feature_2 = request.POST.get('feature_2', '')
 
         # Send input to both GPT and Gemini endpoints
-        gemini_feedback = run_queries_and_store_results(2, user_input, feature_1, feature_2)
+        gemini_feedback = run_queries_and_store_results(50, user_input, feature_1, feature_2)
         gemini_real_world_proportions = get_real_world_proportions(user_input, feature_1, feature_2)
         gemini_uniform_prop = uniform_proportions(user_input, feature_1, feature_2)
 
@@ -176,7 +176,7 @@ def generate_feedback(request):
         feature_1 = request.POST.get('feature_1', '')
         feature_2 = request.POST.get('feature_2', '')
 
-        feedback = run_queries_and_store_results(2, user_input, feature_1, feature_2)
+        feedback = run_queries_and_store_results(60, user_input, feature_1, feature_2)
         real_world_proportions = get_real_world_proportions(user_input, feature_1, feature_2)
         uniform_prop = uniform_proportions(user_input, feature_1, feature_2)
 
