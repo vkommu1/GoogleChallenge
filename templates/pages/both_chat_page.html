@@ -24,29 +24,6 @@
     </div>
 </div>
 
-    
-
-    <script>
-        $(document).ready(function() {
-            $('#compareForm').submit(function(event) {
-                event.preventDefault();
-                $('#loadingIcon').show();  // Show the loading icon
-                $.ajax({
-                    type: $(this).attr('method'),
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $('#loadingIcon').hide();  // Hide the loading icon on success
-                        $('#resultsContainer').html(response).show();  // Assume response is HTML to insert and show
-                    },
-                    error: function() {
-                        $('#loadingIcon').hide();  // Hide the loading icon on error
-                        alert("Failed to load data. Please try again.");  // More user-friendly error handling
-                    }
-                });
-            });
-        });
-    </script>
 
 <div class = "whole">
     {% if input_text %}
@@ -113,7 +90,6 @@
 
 
         <script>
-            // Setup for feature 1 feedback chart
             var feature1Ctx = document.getElementById('GPTfeature1Chart').getContext('2d');
             var feature1Chart = new Chart(feature1Ctx, {
                 type: 'pie',
@@ -132,7 +108,6 @@
                 }
             });
         
-            // Setup for feature 2 feedback chart
             var feature2Ctx = document.getElementById('GPTfeature2Chart').getContext('2d');
             var feature2Chart = new Chart(feature2Ctx, {
                 type: 'pie',
@@ -151,7 +126,6 @@
                 }
             });
         
-            // Setup for real world feature 1 chart
             var realWorldFeature1Ctx = document.getElementById('GPTrealWorldFeature1Chart').getContext('2d');
             var realWorldFeature1Chart = new Chart(realWorldFeature1Ctx, {
                 type: 'pie',
@@ -176,7 +150,6 @@
                 }
             });
         
-            // Setup for real world feature 2 chart
             var realWorldFeature2Ctx = document.getElementById('GPTrealWorldFeature2Chart').getContext('2d');
             var realWorldFeature2Chart = new Chart(realWorldFeature2Ctx, {
                 type: 'pie',
@@ -280,7 +253,6 @@
 
 
         <script>
-            // Setup for feature 1 feedback chart
             var feature1Ctx = document.getElementById('Geminifeature1Chart').getContext('2d');
             var feature1Chart = new Chart(feature1Ctx, {
                 type: 'pie',
@@ -299,7 +271,6 @@
                 }
             });
         
-            // Setup for feature 2 feedback chart
             var feature2Ctx = document.getElementById('Geminifeature2Chart').getContext('2d');
             var feature2Chart = new Chart(feature2Ctx, {
                 type: 'pie',
@@ -318,7 +289,6 @@
                 }
             });
         
-            // Setup for real world feature 1 chart
             var realWorldFeature1Ctx = document.getElementById('GeminirealWorldFeature1Chart').getContext('2d');
             var realWorldFeature1Chart = new Chart(realWorldFeature1Ctx, {
                 type: 'pie',
@@ -342,8 +312,7 @@
                     }
                 }
             });
-        
-            // Setup for real world feature 2 chart
+
             var realWorldFeature2Ctx = document.getElementById('GeminirealWorldFeature2Chart').getContext('2d');
             var realWorldFeature2Chart = new Chart(realWorldFeature2Ctx, {
                 type: 'pie',

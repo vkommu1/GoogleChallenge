@@ -1,20 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import JsonResponse  # Import for potential error response
 
-from django.db.models import Q
 from profiles.models import UserProfile
-from django.views.decorators.http import require_POST
-from django.core.exceptions import ValidationError
+
 
 from .services import  process_input_and_generate_feedback, run_queries_and_store_results, get_real_world_proportions, uniform_proportions, run_gpt_queries_and_store_results, get_gpt_real_world_proportions, uniform_gpt_proportions 
 import json
-from datetime import datetime
 import re
 from olclient.openlibrary import OpenLibrary
-from django.shortcuts import redirect
 import uuid
 from django.urls import reverse
 import requests

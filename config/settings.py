@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+GPT_API_KEY = os.getenv('GPT_API_KEY')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,6 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-l)-gigyn5@zz&gea=9t_cb(_=n$9lk)vydd355*zp_9z#td@!7'
+
+
+#API KEYS:
+os.environ.setdefault('GOOGLE_API_KEY', 'AIzaSyBGRo3GCYTXxBRpxoZJU-yDl3477gBMW6g')
+os.environ.setdefault('GPT_API_KEY', 'sk-proj-26rSfXU7VkhZZVqtBZkAT3BlbkFJ8ie501PN6kZj4y4mLbWq')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
