@@ -15,6 +15,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+load_dotenv()
+
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 GPT_API_KEY = os.getenv('GPT_API_KEY')
 
